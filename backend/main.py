@@ -28,6 +28,14 @@ try:
     model = tf.keras.models.load_model(MODEL_PATH)
     classes = np.array(['bhajani', 'dadra', 'teentaal'])
     print("✅ Model loaded successfully into memory.")
+
+    # --- NEW: WARM UP THE TENSORFLOW GRAPH ---
+    print("🔥 Warming up the TensorFlow graph...")
+    # Create a dummy spectrogram of the exact shape your CNN expects
+    dummy_data = np.zeros((1, 128, 862, 1), dtype=np.float32)
+    model.predict(dummy_data, verbose=0)
+    print("✅ Warmup complete! Server is ready for instant predictions.")
+
 except Exception as e:
     print(f"❌ Error loading model: {e}")
     model = None
