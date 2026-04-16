@@ -26,7 +26,7 @@ def extract_spectrogram(chunk, sr):
 def predict_song_cnn(file_path, model_instance, class_labels):
     """ Slices audio, runs inference, and returns democratic voting results. """
     try:
-        y_full, sr = librosa.load(file_path, sr=22050)
+        y_full, sr = librosa.load(file_path, sr=22050, duration=60)
     except Exception as e:
         print(f"Error loading audio: {e}")
         return None, 0.0, {}

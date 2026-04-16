@@ -2,6 +2,7 @@ import os
 import urllib.request
 import tempfile
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import tensorflow as tf
 import numpy as np
@@ -11,7 +12,17 @@ from scripts.predict_cnn import predict_song_cnn, extract_spectrogram
 
 app = FastAPI(title="Taal AI Inference API")
 
-# Load the model once when the server starts (prevents crashing from loading per user)
+# --- NEW: CORS SECURITY FIX ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows any frontend to connect (localhost or Vercel)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ------------------------------
+
+# Load the model once when the server starts
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "taal_cnn_model.keras")
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
