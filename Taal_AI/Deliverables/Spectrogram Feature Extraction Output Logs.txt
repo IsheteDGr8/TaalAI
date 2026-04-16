@@ -1,0 +1,8 @@
+PS C:\Users\ishaa\OneDrive - UW\Winter 2026\CSS 497_Capstone Project\Development\Taal_AI> python scripts/generate_spectrograms.py
+Initializing Deep Learning Data Pipeline...
+Detected 3 classes: ['bhajani', 'dadra', 'teentaal']
+Processing: [bhajani]
+Processing: [dadra]
+Processing: [teentaal]
+✅ SUCCESS! Matrix Shape: (1073, 128, 862, 1)
+

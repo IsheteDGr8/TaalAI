@@ -1,0 +1,25 @@
+# Ignore the Python Virtual Environment
+venv/
+__pycache__/
+
+# Ignore massive data matrices
+*.npy
+
+# Ignore raw audio datasets (you can keep your 2-3 test files if they are in a separate folder)
+Taal_AI/processed/
+Taal_AI/raw/
+Taal_AI/cnn_data/
+Taal_AI/test/
+# Ignore the Prototypes raw data
+Prototypes/data/
+Prototypes/jhaptaal/
+Prototypes/unknown/
+# Ignore the First Quarter Submission cnn_data
+First_Quarter_Submission/cnn_data/
+
+# OS generated files
+.DS_Store
+
+# Ignore the massive zip file
+archive.zip
+
