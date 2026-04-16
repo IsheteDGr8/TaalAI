@@ -12,15 +12,13 @@ from scripts.predict_cnn import predict_song_cnn, extract_spectrogram
 
 app = FastAPI(title="Taal AI Inference API")
 
-# --- NEW: CORS SECURITY FIX ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allows any frontend to connect (localhost or Vercel)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# ------------------------------
 
 # Load the model once when the server starts
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "taal_cnn_model.keras")
@@ -28,14 +26,6 @@ try:
     model = tf.keras.models.load_model(MODEL_PATH)
     classes = np.array(['bhajani', 'dadra', 'teentaal'])
     print("✅ Model loaded successfully into memory.")
-
-    # --- NEW: WARM UP THE TENSORFLOW GRAPH ---
-    print("🔥 Warming up the TensorFlow graph...")
-    # Create a dummy spectrogram of the exact shape your CNN expects
-    dummy_data = np.zeros((1, 128, 862, 1), dtype=np.float32)
-    model.predict(dummy_data, verbose=0)
-    print("✅ Warmup complete! Server is ready for instant predictions.")
-
 except Exception as e:
     print(f"❌ Error loading model: {e}")
     model = None
