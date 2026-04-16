@@ -6,16 +6,16 @@ __pycache__/
 *.npy
 
 # Ignore raw audio datasets (you can keep your 2-3 test files if they are in a separate folder)
-Taal_AI/processed/
-Taal_AI/raw/
-Taal_AI/cnn_data/
-Taal_AI/test/
+archive/Taal_AI/processed/
+archive/Taal_AI/raw/
+archive/Taal_AI/cnn_data/*.npy
+archive/Taal_AI/test/
 # Ignore the Prototypes raw data
-Prototypes/data/
-Prototypes/jhaptaal/
-Prototypes/unknown/
+archive/Prototypes/data/
+archive/Prototypes/jhaptaal/
+archive/Prototypes/unknown/
 # Ignore the First Quarter Submission cnn_data
-First_Quarter_Submission/cnn_data/
+docs/First_Quarter_Submission/cnn_data/
 
 # OS generated files
 .DS_Store
