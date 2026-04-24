@@ -1,45 +1,27 @@
-import "./globals.css";
-import Link from "next/link";
+import './globals.css';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export const metadata = {
-  title: "Taal AI | Classical Rhythm Detection",
-  description: "Machine Learning architecture for Indian Classical audio classification.",
+  title: 'Taal AI',
+  description: 'End-to-End Audio Classification System for Indian Classical Rhythmic Cycles',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex flex-col font-sans">
-        
-        {/* Navigation Bar */}
-        <nav className="sticky top-0 z-50 w-full bg-indian-brown text-indian-bg shadow-md border-b-4 border-indian-gold">
-          <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <Link href="/" className="text-2xl font-serif font-bold tracking-widest text-indian-gold hover:text-white transition-colors">
-              TAAL AI
-            </Link>
-            <div className="hidden md:flex space-x-8 font-medium tracking-wide text-sm">
-              <Link href="/" className="hover:text-indian-gold transition-colors">HOME</Link>
-              <Link href="/classify" className="hover:text-indian-gold transition-colors">CLASSIFY</Link>
-              <Link href="/learn" className="hover:text-indian-gold transition-colors">LEARN</Link>
-              <Link href="/about" className="hover:text-indian-gold transition-colors">ABOUT</Link>
-            </div>
-            {/* Mobile Menu Placeholder */}
-            <div className="md:hidden text-indian-gold font-serif font-bold">
-              ॥
-            </div>
-          </div>
-        </nav>
+      {/* min-h-screen and flex-col are crucial for the sticky footer layout */}
+      <body className="flex flex-col min-h-screen bg-gray-50 text-gray-900 antialiased">
+        <Navbar />
 
-        {/* Page Content */}
-        <main className="flex-grow flex flex-col">
-          {children}
+        {/* flex-grow pushes the footer to the bottom; inner container adds spacing */}
+        <main className="flex-grow w-full">
+          <div className="max-w-5xl mx-auto px-6 py-12 w-full">
+            {children}
+          </div>
         </main>
 
-        {/* Footer */}
-        <footer className="bg-indian-dark text-indian-bg py-6 text-center text-sm border-t border-indian-brown">
-          <p className="opacity-70">Built with FastAPI, TensorFlow, and Next.js</p>
-        </footer>
-
+        <Footer />
       </body>
     </html>
   );

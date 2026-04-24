@@ -1,34 +1,42 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex-grow flex flex-col items-center justify-center p-6 relative overflow-hidden bg-indian-bg">
-      
-      {/* Decorative Background Rings (Representing Rhythmic Cycles) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[1px] border-indian-gold/20 rounded-full"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[2px] border-indian-brown/10 rounded-full"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border-[1px] border-indian-gold/30 rounded-full"></div>
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex flex-col">
+      {/* Main Container: Constrains width and handles overall vertical padding */}
+      <main className="max-w-5xl mx-auto w-full px-6 py-16 md:py-24 flex flex-col items-center justify-center flex-grow space-y-12">
 
-      {/* Main Glass Panel */}
-      <div className="relative z-10 text-center max-w-4xl w-full p-10 md:p-16 bg-white/40 backdrop-blur-xl rounded-3xl border border-white/60 shadow-2xl">
-        <h2 className="text-sm md:text-base font-bold tracking-[0.4em] text-indian-gold mb-4 uppercase drop-shadow-sm">
-          The Rhythm of AI
-        </h2>
-        <h1 className="text-5xl md:text-8xl font-serif font-bold text-indian-dark mb-6 tracking-tight">
-          Taal <span className="text-indian-earth italic font-light">&</span> Tech
-        </h1>
-        <p className="text-lg md:text-2xl text-indian-brown/90 font-medium max-w-2xl mx-auto mb-12 leading-relaxed">
-          An end-to-end deep learning architecture trained to decode the ancient, percussive cycles of Hindustani Classical Music.
-        </p>
-        
-        <Link 
-          href="/classify" 
-          className="group relative inline-flex items-center justify-center px-10 py-5 font-serif tracking-widest text-lg text-indian-bg bg-indian-dark rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-indian-brown hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.8)]"
-        >
-          <span className="relative">COMMENCE ANALYSIS</span>
-        </Link>
-      </div>
+        {/* Header Section: Vertical spacing (space-y-4) keeps the title and subtitle logically grouped */}
+        <div className="text-center space-y-4 w-full">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
+            Taal AI
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            End-to-End Audio Classification System for Indian Classical Rhythmic Cycles.
+          </p>
+        </div>
 
+        {/* Primary Action Card: A white card with padding (p-8) to separate the action from the background */}
+        <div className="w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 flex flex-col items-center space-y-8">
+          
+          {/* Upload / Input Area Indicator */}
+          <div className="w-full max-w-md border-2 border-dashed border-gray-300 rounded-xl p-10 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer group">
+            <svg className="w-10 h-10 text-gray-400 mb-3 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <p className="text-gray-600 font-medium text-center">Drag and drop audio file here</p>
+            <p className="text-sm text-gray-400 mt-2">Supports .wav, .mp3</p>
+          </div>
+
+          {/* Navigation/Action Button */}
+          <Link
+            href="/classify"
+            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-100"
+          >
+            Start Classification
+          </Link>
+        </div>
+      </main>
     </div>
   );
 }
