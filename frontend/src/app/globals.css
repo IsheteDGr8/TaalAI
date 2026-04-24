@@ -2,29 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    /* Prevents horizontal scrolling caused by overflowing elements */
-    @apply overflow-x-hidden antialiased bg-gray-50; 
-  }
+body {
+  background-color: #1A1210; /* classical-dark */
+  color: #E3D5CA; /* classical-sand */
+  scroll-behavior: smooth;
+  background-image: radial-gradient(circle at 50% 0%, #3E2415 0%, transparent 70%);
 }
 
-@layer components {
-  .container {
-    max-width: 64rem; /* 1024px */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem; /* px-6 */
-    padding-right: 1.5rem;
-  }
-
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-100;
-  }
+::-webkit-scrollbar {
+  width: 6px;
 }
-
-@layer utilities {
-  .transition-fast {
-    transition: all 150ms ease-in-out;
-  }
+::-webkit-scrollbar-track {
+  background: #1A1210;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5A937;
+  border-radius: 3px;
 }

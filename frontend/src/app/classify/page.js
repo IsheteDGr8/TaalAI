@@ -24,7 +24,6 @@ export default function Classify() {
       setError("Please select an audio file first.");
       return;
     }
-
     setLoading(true);
     setError(null);
     setResult(null);
@@ -32,17 +31,10 @@ export default function Classify() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('audio-uploads')
-        .upload(fileName, file);
-
+      const { error: uploadError } = await supabase.storage.from('audio-uploads').upload(fileName, file);
       if (uploadError) throw new Error("Failed to upload audio to storage.");
 
-      const { data: publicUrlData } = supabase.storage
-        .from('audio-uploads')
-        .getPublicUrl(fileName);
-
+      const { data: publicUrlData } = supabase.storage.from('audio-uploads').getPublicUrl(fileName);
       const audioUrl = publicUrlData.publicUrl;
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict`, {
@@ -52,16 +44,10 @@ export default function Classify() {
       });
 
       const predictionData = await response.json();
-
-      if (!response.ok || predictionData.error) {
-        throw new Error(predictionData.error || "Failed to analyze audio.");
-      }
+      if (!response.ok || predictionData.error) throw new Error(predictionData.error || "Failed to analyze audio.");
 
       setResult(predictionData);
-
-      // Auto-cleanup: Delete the file from Supabase after successful prediction
       await supabase.storage.from('audio-uploads').remove([fileName]);
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,97 +56,78 @@ export default function Classify() {
   };
 
   return (
-    <div className="flex-grow flex flex-col items-center justify-center p-6 bg-gradient-to-b from-indian-bg to-[#EFE5CE]">
-      <div className="max-w-2xl w-full bg-white/60 backdrop-blur-md border border-indian-gold/30 rounded-2xl shadow-xl p-8 md:p-12 relative overflow-hidden">
+    <div className="flex-grow flex flex-col items-center justify-center p-6">
+      <div className="max-w-2xl w-full bg-[#241712]/80 backdrop-blur-xl border border-classical-wood/50 rounded-3xl shadow-2xl p-8 md:p-12">
         
-        {/* Decorative Background Element */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-indian-gold/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indian-brown/10 rounded-full blur-3xl"></div>
-
-        <div className="text-center mb-10 relative z-10">
-          <h2 className="text-sm font-bold tracking-[0.3em] text-indian-gold mb-2">ताल विश्लेषण</h2>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-indian-dark mb-4">Analyze Audio</h1>
-          <p className="text-indian-earth font-medium">
-            Upload a .wav file to detect the rhythmic cycle. <br/>
-            <span className="text-sm opacity-80">(The engine will analyze the first 60 seconds of the track)</span>
-          </p>
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">Analysis Engine</h2>
+          <div className="h-1 w-16 bg-classical-gold mx-auto rounded-full mb-4 opacity-50"></div>
+          <p className="text-classical-sand/70 text-sm">Upload a clean .wav file. The AI analyzes the first 60 seconds.</p>
         </div>
 
-        {/* Custom Upload Dropzone */}
-        <div className="relative z-10 mb-8">
-          <div 
-            onClick={() => fileInputRef.current.click()}
-            className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-300 ${
-              file ? 'border-indian-brown bg-indian-brown/5' : 'border-indian-gold/50 hover:bg-indian-gold/10 hover:border-indian-gold'
-            }`}
-          >
-            <input 
-              type="file" 
-              accept="audio/wav" 
-              onChange={handleFileChange} 
-              ref={fileInputRef}
-              className="hidden"
-            />
-            {file ? (
-              <div className="text-indian-dark font-serif text-lg">
-                <span className="block text-2xl mb-2">🎵</span>
-                {file.name}
-              </div>
-            ) : (
-              <div className="text-indian-earth font-serif text-lg">
-                <span className="block text-3xl mb-2 opacity-50">📥</span>
-                Click to browse for an audio file
-              </div>
-            )}
+        {/* Interactive Dropzone */}
+        <div 
+          onClick={() => fileInputRef.current.click()}
+          className={`relative overflow-hidden border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 group ${
+            file ? 'border-classical-gold bg-classical-gold/5' : 'border-classical-wood hover:border-classical-gold hover:bg-classical-wood/20'
+          }`}
+        >
+          <input type="file" accept="audio/wav" onChange={handleFileChange} ref={fileInputRef} className="hidden" />
+          
+          <div className="relative z-10 flex flex-col items-center">
+            <span className={`text-4xl mb-4 transition-transform duration-300 ${file ? 'scale-110' : 'group-hover:-translate-y-2'}`}>
+              {file ? '🎵' : '🎙️'}
+            </span>
+            <div className="font-serif text-lg text-white">
+              {file ? file.name : "Tap to browse audio files"}
+            </div>
           </div>
         </div>
 
-        {/* Analyze Button */}
+        {/* Action Button */}
         <button
           onClick={handleAnalyze}
           disabled={loading || !file}
-          className={`relative z-10 w-full py-4 rounded-lg font-serif tracking-widest text-lg transition-all duration-300 shadow-lg ${
+          className={`mt-8 w-full py-5 rounded-xl font-bold tracking-[0.2em] transition-all duration-300 ${
             loading || !file 
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
-              : 'bg-indian-brown text-indian-bg hover:bg-indian-dark hover:shadow-indian-brown/50 hover:-translate-y-1'
+              ? 'bg-classical-dark text-classical-sand/30 border border-classical-wood cursor-not-allowed' 
+              : 'bg-classical-wood text-classical-gold hover:bg-classical-gold hover:text-classical-dark hover:shadow-[0_0_20px_rgba(229,169,55,0.4)] border border-classical-gold/50'
           }`}
         >
           {loading ? (
             <span className="flex items-center justify-center animate-pulse">
-               Analyzing Frequencies...
+              <span className="mr-3 text-xl animate-spin">⚙️</span> EXTRACTING FEATURES...
             </span>
-          ) : (
-            "COMMENCE ANALYSIS"
-          )}
+          ) : "COMMENCE CLASSIFICATION"}
         </button>
 
-        {/* Error State */}
         {error && (
-          <div className="mt-6 p-4 bg-red-50 text-red-800 border-l-4 border-red-500 rounded-r-md relative z-10 shadow-sm">
-            <p className="font-medium">Error processing audio:</p>
-            <p className="text-sm">{error}</p>
+          <div className="mt-6 p-4 bg-classical-crimson/20 border border-classical-crimson/50 text-red-200 rounded-lg text-center text-sm">
+            {error}
           </div>
         )}
 
-        {/* Results Display */}
+        {/* Result Dashboard */}
         {result && (
-          <div className="mt-10 p-8 border border-indian-gold/40 bg-gradient-to-br from-white to-indian-bg rounded-xl relative z-10 shadow-inner">
-            <h3 className="text-center text-sm font-bold tracking-widest text-indian-earth mb-2 uppercase">Detected Cycle</h3>
-            <h2 className="text-4xl font-serif font-bold text-center text-indian-dark mb-6 capitalize">
-              {result.prediction}
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-4 border-t border-indian-gold/20 pt-6">
-              <div className="text-center">
-                <p className="text-xs tracking-wider text-indian-earth uppercase mb-1">Confidence</p>
-                <p className="text-2xl font-bold text-indian-brown">{(result.confidence * 100).toFixed(1)}%</p>
-              </div>
-              <div className="text-center border-l border-indian-gold/20">
-                <p className="text-xs tracking-wider text-indian-earth uppercase mb-1">Chunk Votes</p>
-                <div className="flex flex-col items-center justify-center text-sm text-indian-dark font-medium">
-                  {Object.entries(result.vote_breakdown || {}).map(([taal, votes]) => (
-                    <span key={taal} className="capitalize">{taal}: {votes}</span>
-                  ))}
+          <div className="mt-10 p-1 bg-gradient-to-b from-classical-gold to-classical-wood rounded-2xl animate-glow-pulse">
+            <div className="bg-[#1A1210] rounded-xl p-8">
+              <h3 className="text-center text-xs tracking-[0.3em] text-classical-sand/50 uppercase mb-2">Dominant Cycle</h3>
+              <h2 className="text-5xl font-serif font-bold text-center text-classical-gold capitalize mb-8 drop-shadow-md">
+                {result.prediction}
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4 border-t border-classical-wood pt-6">
+                <div className="text-center border-r border-classical-wood">
+                  <p className="text-xs tracking-widest text-classical-sand/60 uppercase mb-2">Confidence</p>
+                  <p className="text-2xl font-bold text-white">{(result.confidence * 100).toFixed(1)}%</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs tracking-widest text-classical-sand/60 uppercase mb-2">Chunk Votes</p>
+                  <div className="flex flex-col text-sm text-classical-gold font-medium">
+                    {Object.entries(result.vote_breakdown || {}).map(([taal, votes]) => (
+                      <span key={taal} className="capitalize">{taal}: {votes}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

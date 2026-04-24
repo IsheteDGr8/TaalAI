@@ -1,42 +1,36 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex flex-col">
-      {/* Main Container: Constrains width and handles overall vertical padding */}
-      <main className="max-w-5xl mx-auto w-full px-6 py-16 md:py-24 flex flex-col items-center justify-center flex-grow space-y-12">
+    <div className="flex-grow flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+      
+      {/* Background ambient glows */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-classical-wood/40 rounded-full blur-[100px]"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-classical-gold/10 rounded-full blur-[120px]"></div>
 
-        {/* Header Section: Vertical spacing (space-y-4) keeps the title and subtitle logically grouped */}
-        <div className="text-center space-y-4 w-full">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
-            Taal AI
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            End-to-End Audio Classification System for Indian Classical Rhythmic Cycles.
-          </p>
-        </div>
+      <div className="relative z-10 max-w-3xl">
+        <h2 className="text-classical-gold tracking-[0.5em] text-sm md:text-base mb-6 font-bold uppercase drop-shadow-md">
+          Deep Learning meets Classical Rhythm
+        </h2>
+        
+        <h1 className="text-6xl md:text-8xl font-serif font-bold text-white mb-8 leading-tight drop-shadow-2xl">
+          Decoding the <br/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-classical-gold to-[#FFECB3]">
+            Ancient Beat.
+          </span>
+        </h1>
+        
+        <p className="text-lg md:text-xl text-classical-sand/80 mb-12 font-light leading-relaxed">
+          Upload an audio file and let our Convolutional Neural Network decipher the intricate mathematical structures of Hindustani percussion.
+        </p>
 
-        {/* Primary Action Card: A white card with padding (p-8) to separate the action from the background */}
-        <div className="w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 flex flex-col items-center space-y-8">
-          
-          {/* Upload / Input Area Indicator */}
-          <div className="w-full max-w-md border-2 border-dashed border-gray-300 rounded-xl p-10 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer group">
-            <svg className="w-10 h-10 text-gray-400 mb-3 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-            <p className="text-gray-600 font-medium text-center">Drag and drop audio file here</p>
-            <p className="text-sm text-gray-400 mt-2">Supports .wav, .mp3</p>
-          </div>
-
-          {/* Navigation/Action Button */}
-          <Link
-            href="/classify"
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-100"
-          >
-            Start Classification
-          </Link>
-        </div>
-      </main>
+        <Link 
+          href="/classify" 
+          className="inline-block px-12 py-5 bg-gradient-to-b from-classical-gold to-[#B8860B] text-classical-dark font-serif font-bold tracking-widest rounded-full shadow-[0_0_30px_rgba(229,169,55,0.4)] hover:shadow-[0_0_50px_rgba(229,169,55,0.8)] hover:scale-105 transition-all duration-300"
+        >
+          ENTER THE STUDIO
+        </Link>
+      </div>
     </div>
   );
 }
