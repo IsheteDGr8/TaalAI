@@ -14,35 +14,45 @@
 
   /* Custom Animations */
   --animate-glow-pulse: glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-tabla-ripple: tabla-ripple 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 
   @keyframes glow {
-    0%, 100% { 
-      opacity: 1; 
-      box-shadow: 0 0 15px rgba(229, 169, 55, 0.2); 
-    }
-    50% { 
-      opacity: 0.7; 
-      box-shadow: 0 0 30px rgba(229, 169, 55, 0.6); 
-    }
+    0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(229, 169, 55, 0.2); }
+    50% { opacity: 0.7; box-shadow: 0 0 30px rgba(229, 169, 55, 0.6); }
+  }
+
+  @keyframes tabla-ripple {
+    0% { transform: scale(0.5); opacity: 1; border-width: 4px; }
+    100% { transform: scale(2.5); opacity: 0; border-width: 0px; }
   }
 }
 
-/* Base Styles */
+/* Base Styles with Jali (Lattice) Pattern */
 body {
   background-color: var(--color-classical-dark);
   color: var(--color-classical-sand);
   scroll-behavior: smooth;
-  background-image: radial-gradient(circle at 50% 0%, var(--color-classical-wood) 0%, transparent 70%);
+  
+  /* Intricate CSS Jali Pattern */
+  background-image: 
+    radial-gradient(var(--color-classical-wood) 1px, transparent 1px),
+    radial-gradient(var(--color-classical-wood) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  background-attachment: fixed;
+}
+
+/* Subtle overlay to fade the pattern so it doesn't distract from text */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, var(--color-classical-dark) 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-classical-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-classical-gold);
-  border-radius: 3px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-classical-dark); }
+::-webkit-scrollbar-thumb { background: var(--color-classical-gold); border-radius: 3px; }
