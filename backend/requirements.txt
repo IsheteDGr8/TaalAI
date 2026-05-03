@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 librosa
-tensorflow-cpu=2.21.0
+tensorflow-cpu==2.21.0
 numpy
 yt-dlp
