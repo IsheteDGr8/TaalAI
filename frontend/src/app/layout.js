@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
             <div className="flex items-center space-x-4 md:space-x-10 text-xs md:text-sm font-bold tracking-[0.2em] text-classical-sand">
               <Link href="/classify" className="hover:text-classical-gold transition-colors">ANALYZE</Link>
               <Link href="/theory" className="hidden sm:inline hover:text-classical-gold transition-colors">THEORY</Link>
-              <Link href="/about" className="hover:text-classical-gold transition-colors">ABOUT-ME</Link>
+              <Link href="/about" className="hover:text-classical-gold transition-colors">ABOUT ME</Link>
             </div>
 
           </div>
