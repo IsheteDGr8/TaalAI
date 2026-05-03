@@ -3,3 +3,4 @@ uvicorn
 librosa
 tensorflow-cpu
 numpy
+yt-dlp
