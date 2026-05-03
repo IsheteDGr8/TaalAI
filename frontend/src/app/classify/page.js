@@ -47,7 +47,7 @@ export default function Classify() {
         fileNameForCleanup = fileName;
 
         const { error: uploadError } = await supabase.storage.from('audio-uploads').upload(fileName, file);
-        if (uploadError) throw new Error("Failed to upload audio to storage.");
+        if (uploadError) throw new Error("Supabase Error: " + uploadError.message);
 
         const { data: publicUrlData } = supabase.storage.from('audio-uploads').getPublicUrl(fileName);
         targetUrl = publicUrlData.publicUrl;
