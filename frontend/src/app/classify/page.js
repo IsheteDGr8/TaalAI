@@ -21,6 +21,34 @@ export default function Classify() {
     }
   };
 
+  const handleFileUpload = async () => {
+    setIsLoading(true); // 1. Start animation immediately
+    setError(null);
+    setResult(null);
+    
+    try {
+      // ... your Supabase upload and fetch('/predict') logic ...
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // 2. Stop animation no matter what happens
+    }
+  };
+
+  const handleYouTubeSubmit = async () => {
+    setIsLoading(true); // 1. Start animation immediately for YouTube too
+    setError(null);
+    setResult(null);
+    
+    try {
+      // ... your fetch('/predict') logic for YouTube ...
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // 2. Stop animation no matter what happens
+    }
+  };
+
   const handleAnalyze = async () => {
     if (inputType === "file" && !file) {
       setError("Please select an audio file first.");
