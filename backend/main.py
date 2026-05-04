@@ -10,9 +10,11 @@ import numpy as np
 
 # Import your prediction logic
 from scripts.predict_cnn import predict_song_cnn
-
 # Import the new YouTube utility we built in Phase 2
 from scripts.youtube_utils import is_youtube_url, download_youtube_audio
+
+MODEL_PATH = "taal_cnn_model.keras"  # Adjust this if your model is in a subfolder!
+classes = ["bhajani", "dadra", "teentaal"]  # Ensure this matches the exact order you trained them in
 
 app = FastAPI(title="Taal AI Inference API")
 
@@ -24,12 +26,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load the model once when the server starts
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "taal_cnn_model.keras")
+# 1. Hardcode your exact CNN architecture
+def build_taal_model():
+    model = tf.keras.models.Sequential([
+        tf.keras.layers.Input(shape=(128, 862, 1)),
+        tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 3), strides=(2, 3)),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 3), strides=(2, 3)),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 3), strides=(2, 3)),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(3, activation='softmax')
+    ])
+    return model
+
+# 2. Build the blueprint and ONLY load the weights
 try:
-    model = tf.keras.models.load_model(MODEL_PATH)
-    classes = np.array(['bhajani', 'dadra', 'teentaal'])
-    print("✅ Model loaded successfully into memory.")
+    print("Building model architecture...")
+    model = build_taal_model()
+    
+    print("Loading weights...")
+    # Replace 'MODEL_PATH' with your actual path variable, e.g., 'taal_cnn_model.keras'
+    model.load_weights(MODEL_PATH) 
+    
+    print("✅ Model weights loaded successfully!")
 except Exception as e:
     print(f"❌ Error loading model: {e}")
     model = None
@@ -49,6 +72,7 @@ async def predict_taal(request: AudioRequest):
     # Create a temporary file placeholder
     temp_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     final_file_path = temp_audio_file.name
+    temp_audio_file.close()  # <-- ADD THIS LINE TO UNLOCK THE FILE FOR WINDOWS
     
     try:
         url = request.audio_url
