@@ -15,6 +15,12 @@ export default function About() {
             <Link href="https://github.com/IsheteDGr8" target="_blank" className="text-sm text-classical-sand hover:text-classical-gold tracking-widest uppercase transition-colors">
               GitHub Profile ↗
             </Link>
+            <Link href="https://www.linkedin.com/in/ishaan-shete/" target="_blank" className="text-sm text-classical-sand hover:text-classical-gold tracking-widest uppercase transition-colors">
+              LinkedIn Profile ↗
+            </Link>
+            <Link href="mailto:ishaanbshete@gmail.com" className="text-sm text-classical-sand hover:text-classical-gold tracking-widest uppercase transition-colors">
+              Contact Me ↗
+            </Link>
           </div>
 
           {/* Bio Area */}
@@ -28,13 +34,13 @@ export default function About() {
 
             <div className="text-classical-sand/80 leading-relaxed font-light space-y-4">
               <p>
-                I am a senior studying Computer Science and Software Engineering at UW Bothell. I enjoy blending my fascination with classical, structured concepts—like the Sanskrit language and traditional Indian music—with modern, scalable machine learning architectures.
+                I am a senior studying Computer Science and Software Engineering at UW Bothell. I enjoy blending my passions for music and technology, which is why I founded Taal AI: a platform that uses deep learning to analyze and generate Indian classical music, specifically focusing on the intricate rhythmic patterns known as &quot;taals&quot;.
               </p>
               <p>
-                Taal AI represents exactly that intersection: translating ancient rhythmic cycles into deep learning pipelines. 
+                I have a strong background of Tabla, with 18+ years of experience, and I have been fortunate to share the stage with renowned artists such as Ustad Zakir Hussain. With over 5 Gurus, I have had the privellage to experience compositions and styles from a diverse set of gharanas.
               </p>
               <p>
-                Beyond audio analysis, my recent engineering work focuses on solving complex systemic challenges, from building AI risk detection pipelines for FlowScope to programming UART hardware communications for Mars Rover prototypes.
+                Beyond audio analysis, my experience focuses on machine learning, full-stack development, and edge computing. I am passionate about leveraging technology to create innovative solutions that bridge the gap between tradition and modernity in the world of music.
               </p>
             </div>
           </div>
