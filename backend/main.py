@@ -60,7 +60,7 @@ except Exception as e:
 class AudioRequest(BaseModel):
     audio_url: str
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "active", "model_loaded": model is not None}
 
