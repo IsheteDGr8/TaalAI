@@ -4,3 +4,4 @@ librosa
 tensorflow-cpu==2.19.0
 numpy
 yt-dlp
+python-multipart
