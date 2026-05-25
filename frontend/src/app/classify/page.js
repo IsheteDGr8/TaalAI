@@ -10,7 +10,15 @@ export default function Classify() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [feedbackStatus, setFeedbackStatus] = useState("idle"); // 'idle' | 'asking' | 'submitted'
+  const [hoveredChunk, setHoveredChunk] = useState(null);
   const fileInputRef = useRef(null);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -18,34 +26,6 @@ export default function Classify() {
       setFile(selected);
       setResult(null);
       setError(null);
-    }
-  };
-
-  const handleFileUpload = async () => {
-    setIsLoading(true); // 1. Start animation immediately
-    setError(null);
-    setResult(null);
-    
-    try {
-      // ... your Supabase upload and fetch('/predict') logic ...
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false); // 2. Stop animation no matter what happens
-    }
-  };
-
-  const handleYouTubeSubmit = async () => {
-    setIsLoading(true); // 1. Start animation immediately for YouTube too
-    setError(null);
-    setResult(null);
-    
-    try {
-      // ... your fetch('/predict') logic for YouTube ...
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false); // 2. Stop animation no matter what happens
     }
   };
 
@@ -59,6 +39,8 @@ export default function Classify() {
       return;
     }
 
+    setFeedbackStatus("idle");
+    setHoveredChunk(null);
     setLoading(true);
     setError(null);
     setResult(null);
@@ -66,25 +48,37 @@ export default function Classify() {
     let fileNameForCleanup = null;
 
     try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL;
+      if (!apiBase) {
+        throw new Error("NEXT_PUBLIC_API_URL is not configured. Check frontend/.env.local and restart the dev server.");
+      }
+
       let targetUrl = "";
 
-      // 1. Determine the URL based on the input mode
       if (inputType === "file") {
+        if (file.size > 50 * 1024 * 1024) {
+          throw new Error("File is larger than 50 MB, which exceeds the Supabase upload limit.");
+        }
+
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
         fileNameForCleanup = fileName;
 
-        const { error: uploadError } = await supabase.storage.from('audio-uploads').upload(fileName, file);
+        console.log("[Taal AI] Uploading file to Supabase:", fileName, file.type, file.size);
+        const { error: uploadError } = await supabase.storage
+          .from('audio-uploads')
+          .upload(fileName, file, { contentType: file.type || 'audio/mpeg', upsert: false });
         if (uploadError) throw new Error("Supabase Error: " + uploadError.message);
 
         const { data: publicUrlData } = supabase.storage.from('audio-uploads').getPublicUrl(fileName);
         targetUrl = publicUrlData.publicUrl;
+        console.log("[Taal AI] Public URL:", targetUrl);
       } else {
         targetUrl = youtubeUrl.trim();
       }
 
-      // 2. Send to the AI Backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict`, {
+      console.log("[Taal AI] Calling backend:", `${apiBase}/predict`);
+      const response = await fetch(`${apiBase}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ audio_url: targetUrl }),
@@ -98,6 +92,7 @@ export default function Classify() {
       setResult(predictionData);
 
     } catch (err) {
+      console.error("[Taal AI] Analyze failed:", err);
       setError(err.message);
     } finally {
       // 3. Always clean up Supabase storage if a file was uploaded
@@ -105,6 +100,24 @@ export default function Classify() {
         await supabase.storage.from('audio-uploads').remove([fileNameForCleanup]);
       }
       setLoading(false);
+    }
+  };
+
+  const submitFeedback = async (isCorrect, actualTaal = null) => {
+    try {
+      const source = inputType === "youtube" ? youtubeUrl : file?.name;
+      const { error: insertError } = await supabase
+        .from("user_corrections")
+        .insert([{
+          audio_source: source,
+          ai_prediction: result.prediction,
+          user_correction: isCorrect ? "CORRECT" : actualTaal,
+        }]);
+
+      if (insertError) throw insertError;
+      setFeedbackStatus("submitted");
+    } catch (err) {
+      console.error("Failed to save feedback:", err);
     }
   };
 
@@ -157,7 +170,7 @@ export default function Classify() {
                 'border-classical-wood hover:border-classical-gold hover:bg-classical-wood/20 cursor-pointer'
               }`}
             >
-              <input type="file" accept="audio/wav,audio/mp3" onChange={handleFileChange} ref={fileInputRef} className="hidden" disabled={loading} />
+              <input type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg,.flac" onChange={handleFileChange} ref={fileInputRef} className="hidden" disabled={loading} />
               <div className="relative z-10 flex flex-col items-center">
                 <span className={`text-4xl mb-4 transition-transform duration-300 ${file ? 'scale-110' : 'group-hover:-translate-y-2'}`}>
                   {file ? '🎵' : '🎙️'}
@@ -218,33 +231,150 @@ export default function Classify() {
             </div>
           )}
 
-          {/* Result Dashboard */}
+          {/* --- RESULTS WITH TIMELINE & FEEDBACK --- */}
           {result && !loading && (
-            <div className="mt-10 p-[1px] bg-gradient-to-b from-classical-gold/80 to-classical-wood rounded-2xl relative z-10 shadow-2xl">
-              <div className="bg-[#1A1210] rounded-xl p-8">
-                <h3 className="text-center text-xs tracking-[0.3em] text-classical-sand/50 uppercase mb-2">Dominant Cycle</h3>
-                <h2 className="text-5xl font-serif font-bold text-center text-classical-gold capitalize mb-8 drop-shadow-md">
+            <div className="flex flex-col items-center w-full mt-10 animate-fade-in-up relative z-10">
+
+              {/* Main Prediction */}
+              <div className="w-full bg-[#FDF4DF] p-6 rounded-2xl border border-[#D4AF37] text-center shadow-md">
+                <p className="text-xs text-stone-500 uppercase tracking-widest font-semibold mb-2">Dominant Cycle</p>
+                <h2 className="text-4xl font-serif font-bold text-[#8B3A2B] mb-1 drop-shadow-sm">
                   {result.prediction}
                 </h2>
-                
-                <div className="grid grid-cols-2 gap-4 border-t border-classical-wood pt-6">
-                  <div className="text-center border-r border-classical-wood">
-                    <p className="text-xs tracking-widest text-classical-sand/60 uppercase mb-2">Confidence</p>
-                    <p className="text-2xl font-bold text-white">
-                      {/* Check if confidence comes as a decimal or percentage */}
-                      {result.confidence <= 1 ? (result.confidence * 100).toFixed(1) : parseFloat(result.confidence).toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs tracking-widest text-classical-sand/60 uppercase mb-2">Chunk Votes</p>
-                    <div className="flex flex-col text-sm text-classical-gold font-medium">
-                      {Object.entries(result.vote_breakdown || {}).map(([taal, votes]) => (
-                        <span key={taal} className="capitalize">{taal}: {votes}</span>
+                <p className="text-stone-700 font-medium text-sm">
+                  Confidence: <span className="font-bold text-stone-900">{result.confidence}%</span>
+                </p>
+
+                {/* THE TIMELINE VISUALIZER */}
+                {result.timeline && result.timeline.length > 0 && (() => {
+                  const TAAL_COLORS = {
+                    TEENTAAL: { bg: "bg-[#8B3A2B]", swatch: "#8B3A2B", label: "Teentaal" },
+                    DADRA:    { bg: "bg-[#D4AF37]", swatch: "#D4AF37", label: "Dadra" },
+                    BHAJANI:  { bg: "bg-[#4A5D23]", swatch: "#4A5D23", label: "Bhajani" },
+                    SILENT:   { bg: "bg-stone-400", swatch: "#A8A29E", label: "Silent / no beat" },
+                  };
+                  const presentTaals = Array.from(new Set(result.timeline.map(c => c.prediction)))
+                    .filter(t => TAAL_COLORS[t]);
+
+                  return (
+                    <div className="mt-6 pt-6 border-t border-[#D4AF37]/30">
+                      <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-3">Rhythmic Timeline (20s Chunks)</p>
+
+                      {/* SCRUBBER INFO BAR — replaces the native browser tooltip */}
+                      <div className="h-6 mb-2 flex items-center justify-center text-xs font-mono px-2 bg-stone-100 border border-stone-200 rounded-md">
+                        {hoveredChunk ? (
+                          <span className="flex items-center gap-2 text-stone-700">
+                            <span
+                              className="inline-block w-2.5 h-2.5 rounded-sm"
+                              style={{ backgroundColor: (TAAL_COLORS[hoveredChunk.prediction] ?? TAAL_COLORS.SILENT).swatch }}
+                            ></span>
+                            <span className="font-semibold">
+                              {formatTime(hoveredChunk.start_time)}&nbsp;–&nbsp;{formatTime(hoveredChunk.end_time)}
+                            </span>
+                            <span className="text-stone-400">·</span>
+                            <span className="font-bold" style={{ color: (TAAL_COLORS[hoveredChunk.prediction] ?? TAAL_COLORS.SILENT).swatch }}>
+                              {hoveredChunk.prediction}
+                            </span>
+                            <span className="text-stone-400">·</span>
+                            <span>{hoveredChunk.confidence}% conf.</span>
+                          </span>
+                        ) : (
+                          <span className="text-stone-400 italic">Hover any segment to inspect</span>
+                        )}
+                      </div>
+
+                      <div
+                        className="flex w-full h-8 rounded-md overflow-hidden shadow-inner bg-stone-200"
+                        onMouseLeave={() => setHoveredChunk(null)}
+                      >
+                        {result.timeline.map((chunk, idx) => {
+                          const c = TAAL_COLORS[chunk.prediction] ?? TAAL_COLORS.SILENT;
+                          const isHovered = hoveredChunk === chunk;
+                          return (
+                            <div
+                              key={idx}
+                              onMouseEnter={() => setHoveredChunk(chunk)}
+                              className={`flex-1 h-full ${c.bg} border-r border-white/20 transition-all cursor-pointer ${
+                                isHovered ? 'opacity-100 ring-2 ring-white/60 ring-inset z-10' : 'opacity-100 hover:opacity-90'
+                              }`}
+                            ></div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-between text-[10px] text-stone-400 mt-1 font-mono">
+                        <span>0:00</span>
+                        <span>{formatTime(result.timeline[result.timeline.length - 1].end_time)}</span>
+                      </div>
+
+                      {/* COLOR LEGEND */}
+                      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4">
+                        {presentTaals.map((taal) => (
+                          <div key={taal} className="flex items-center gap-1.5">
+                            <span
+                              className="inline-block w-3 h-3 rounded-sm border border-black/10"
+                              style={{ backgroundColor: TAAL_COLORS[taal].swatch }}
+                            ></span>
+                            <span className="text-[10px] text-stone-600 uppercase tracking-wider font-semibold">
+                              {TAAL_COLORS[taal].label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* THE FEEDBACK LOOP */}
+              <div className="w-full mt-4 bg-stone-800/50 backdrop-blur-sm p-4 rounded-xl border border-stone-700 flex flex-col items-center">
+                {feedbackStatus === "idle" && (
+                  <>
+                    <p className="text-xs text-[#D4AF37] tracking-wider uppercase mb-3">Was this prediction correct?</p>
+                    <div className="flex space-x-3 w-full">
+                      <button
+                        onClick={() => submitFeedback(true)}
+                        className="flex-1 py-2 bg-stone-700/50 hover:bg-stone-600 text-stone-200 text-sm font-semibold rounded-lg border border-stone-600 transition-colors"
+                      >
+                        👍 Yes
+                      </button>
+                      <button
+                        onClick={() => setFeedbackStatus("asking")}
+                        className="flex-1 py-2 bg-stone-700/50 hover:bg-stone-600 text-stone-200 text-sm font-semibold rounded-lg border border-stone-600 transition-colors"
+                      >
+                        👎 No
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {feedbackStatus === "asking" && (
+                  <div className="w-full flex flex-col items-center animate-fade-in">
+                    <p className="text-xs text-[#D4AF37] tracking-wider uppercase mb-3">What was the actual Taal?</p>
+                    <div className="grid grid-cols-3 gap-2 w-full">
+                      {["TEENTAAL", "DADRA", "BHAJANI"].map((taal) => (
+                        <button
+                          key={taal}
+                          onClick={() => submitFeedback(false, taal)}
+                          className="py-2 bg-stone-700 hover:bg-[#8B3A2B] text-white text-[11px] font-bold tracking-wider rounded-md transition-colors"
+                        >
+                          {taal}
+                        </button>
                       ))}
                     </div>
                   </div>
-                </div>
+                )}
+
+                {feedbackStatus === "submitted" && (
+                  <p className="text-sm text-[#D4AF37] font-medium py-2 animate-fade-in">Thank you for helping train Taal AI! 🙏</p>
+                )}
               </div>
+
+              <button
+                onClick={() => { setResult(null); setFeedbackStatus("idle"); }}
+                className="mt-6 w-full py-3.5 border-2 border-[#D4AF37] text-[#D4AF37] font-bold tracking-widest uppercase rounded-lg hover:bg-[#D4AF37] hover:text-stone-900 transition-all shadow-sm"
+              >
+                Analyze Another
+              </button>
             </div>
           )}
         </div>

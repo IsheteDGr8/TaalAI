@@ -24,12 +24,12 @@ def extract_spectrogram(chunk, sr):
     return S_DB.reshape(1, N_MELS, MAX_FRAMES, 1)
 
 def predict_song_cnn(file_path, model_instance, class_labels):
-    """ Slices audio, runs inference, and returns democratic voting results. """
+    """ Slices audio, runs inference, and returns democratic voting results + a per-chunk timeline. """
     try:
         y_full, sr = librosa.load(file_path, sr=22050)
     except Exception as e:
         print(f"Error loading audio: {e}")
-        return None, 0.0, {}
+        return None, 0.0, []
 
     clip_samples = 22050 * 20
     num_chunks = math.floor(librosa.get_duration(y=y_full, sr=sr) / 20)
@@ -39,26 +39,42 @@ def predict_song_cnn(file_path, model_instance, class_labels):
         y_full = librosa.util.fix_length(y_full, size=clip_samples)
 
     predictions = []
+    chunk_timeline = []
 
     for i in range(num_chunks):
         start = i * clip_samples
         chunk = y_full[start:start + clip_samples]
 
+        # Onset filter: chunks without enough percussive activity are excluded from voting,
+        # but still appear in the timeline labeled "SILENT" so the visualizer stays continuous.
         onset_env = librosa.onset.onset_strength(y=chunk, sr=sr)
-        if len(librosa.onset.onset_detect(onset_envelope=onset_env, sr=sr)) < 15:
-            continue
+        has_beats = len(librosa.onset.onset_detect(onset_envelope=onset_env, sr=sr)) >= 15
 
         spec_data = extract_spectrogram(chunk, sr)
         probs = model_instance.predict(spec_data, verbose=0)[0]
 
         best_class = str(class_labels[np.argmax(probs)])
-        predictions.append(best_class)
+        confidence = float(np.max(probs))
+
+        if has_beats:
+            predictions.append(best_class)
+            timeline_label = best_class.upper()
+        else:
+            timeline_label = "SILENT"
+
+        chunk_timeline.append({
+            "chunk_num": i + 1,
+            "start_time": i * 20,
+            "end_time": (i + 1) * 20,
+            "prediction": timeline_label,
+            "confidence": round(confidence * 100, 1),
+        })
 
     if not predictions:
-        return None, 0.0, {}
+        return None, 0.0, chunk_timeline
 
     vote_counts = Counter(predictions)
     winner, count = vote_counts.most_common(1)[0]
     confidence = count / len(predictions)
 
-    return winner, confidence, dict(vote_counts)
+    return winner, confidence, chunk_timeline

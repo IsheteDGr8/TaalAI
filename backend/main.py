@@ -94,15 +94,15 @@ async def predict_taal(request: AudioRequest):
         result = await asyncio.to_thread(
             predict_song_cnn, final_file_path, model, classes
         )
-        winner, confidence, breakdown = result
-        
+        winner, confidence, chunk_timeline = result
+
         if not winner:
             return {"error": "Audio too quiet or no percussive beats detected."}
-            
+
         return {
             "prediction": winner.upper(),
             "confidence": round((confidence) * 100, 2),
-            "vote_breakdown": breakdown
+            "timeline": chunk_timeline,
         }
         
     except ValueError as ve:
