@@ -23,17 +23,32 @@ def extract_spectrogram(chunk, sr):
         
     return S_DB.reshape(1, N_MELS, MAX_FRAMES, 1)
 
-def predict_song_cnn(file_path, model_instance, class_labels):
-    """ Slices audio, runs inference, and returns democratic voting results + a per-chunk timeline. """
+def predict_song_cnn(file_path, model_instance, class_labels, start_time=None, end_time=None):
+    """
+    Slices audio, runs inference, and returns democratic voting results + a per-chunk timeline.
+
+    If start_time / end_time are provided, only that segment of the file is decoded and
+    analyzed. Timeline timestamps are reported in *original* file time (i.e. shifted by
+    start_time) so the frontend visualizer matches the user's mental model of the song.
+    """
     try:
-        y_full, sr = librosa.load(file_path, sr=22050)
+        load_kwargs = {"sr": 22050}
+        offset = float(start_time) if start_time is not None else 0.0
+        if start_time is not None:
+            load_kwargs["offset"] = float(start_time)
+        if end_time is not None and start_time is not None:
+            load_kwargs["duration"] = float(end_time) - float(start_time)
+        elif end_time is not None:
+            load_kwargs["duration"] = float(end_time)
+
+        y_full, sr = librosa.load(file_path, **load_kwargs)
     except Exception as e:
         print(f"Error loading audio: {e}")
         return None, 0.0, []
 
     clip_samples = 22050 * 20
     num_chunks = math.floor(librosa.get_duration(y=y_full, sr=sr) / 20)
-    
+
     if num_chunks == 0:
         num_chunks = 1
         y_full = librosa.util.fix_length(y_full, size=clip_samples)
@@ -62,10 +77,14 @@ def predict_song_cnn(file_path, model_instance, class_labels):
         else:
             timeline_label = "SILENT"
 
+        # Report timestamps in absolute song time, not segment-relative time.
+        seg_start = int(offset + i * 20)
+        seg_end = int(offset + (i + 1) * 20)
+
         chunk_timeline.append({
             "chunk_num": i + 1,
-            "start_time": i * 20,
-            "end_time": (i + 1) * 20,
+            "start_time": seg_start,
+            "end_time": seg_end,
             "prediction": timeline_label,
             "confidence": round(confidence * 100, 1),
         })
