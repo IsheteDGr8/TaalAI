@@ -527,16 +527,149 @@ export default function Classify() {
         ताल
       </div>
 
-      {/* --- THE MEHRAB ARCHWAY CONTAINER --- */}
-      <div className="max-w-2xl w-full relative z-10 pt-8">
-        
-        {/* The Architectural Frame Layers */}
-        <div className="absolute inset-0 bg-[#241712]/90 backdrop-blur-2xl border-x-2 border-b-2 border-classical-wood/60 border-t-4 border-t-classical-gold rounded-t-[140px] rounded-b-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-none">
-          {/* Inner Gold Arch */}
-          <div className="absolute top-3 left-3 right-3 bottom-3 border border-classical-gold/20 rounded-t-[130px] rounded-b-xl shadow-[inset_0_0_30px_rgba(229,169,55,0.05)]"></div>
+      {/* --- THE JHAROKHA ARCHWAY CONTAINER --- */}
+      <div className="max-w-2xl w-full relative z-10 pt-16">
+
+        {/* === KALASH FINIAL with mango leaves — traditional Indian pinnacle ===
+            Stacked dome (kalash water-pot) flanked by two stylized mango leaves. */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 z-30 pointer-events-none">
+          <svg width="48" height="56" viewBox="0 0 48 56" className="drop-shadow-[0_2px_6px_rgba(229,169,55,0.4)]">
+            {/* Left mango leaf */}
+            <path d="M 24,40 Q 8,38 6,28 Q 14,30 24,40 Z" fill="#D4AF37" opacity="0.85" />
+            {/* Right mango leaf */}
+            <path d="M 24,40 Q 40,38 42,28 Q 34,30 24,40 Z" fill="#D4AF37" opacity="0.85" />
+            {/* Central stem rising from the leaves */}
+            <line x1="24" y1="40" x2="24" y2="18" stroke="#D4AF37" strokeWidth="2" />
+            {/* Top dome of the kalash */}
+            <circle cx="24" cy="16" r="4" fill="#D4AF37" />
+            {/* Tiny crowning bead */}
+            <circle cx="24" cy="8" r="2" fill="#D4AF37" />
+            <line x1="24" y1="10" x2="24" y2="12" stroke="#D4AF37" strokeWidth="1.5" />
+          </svg>
         </div>
 
-        <div className="relative z-20 p-8 md:p-14 pt-16">
+        {/* The Jharokha Frame — a SINGLE elegant Mughal ogee arch (clean, less busy
+            than the multi-foil) drawn as a stretchable SVG path, plus a rectangular
+            body that grows with content. */}
+        <div className="absolute inset-0 pointer-events-none flex flex-col">
+          {/* OGEE ARCH TOP (fixed height; non-scaling-stroke keeps the gold line crisp) */}
+          <div className="relative h-[170px] flex-shrink-0">
+            <svg
+              viewBox="0 -6 400 176"
+              preserveAspectRatio="none"
+              className="absolute inset-0 w-full h-full overflow-visible"
+              style={{ filter: "drop-shadow(0 20px 50px rgba(0,0,0,0.5))" }}
+            >
+              <defs>
+                {/* Subtle radial highlight inside the dome so the arch has depth */}
+                <radialGradient id="domeGlow" cx="50%" cy="100%" r="80%">
+                  <stop offset="0%" stopColor="#3A2418" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#1A0F0A" stopOpacity="0.95" />
+                </radialGradient>
+              </defs>
+
+              {/* Outer body — a clean tall ogee arch (subtle pointed apex like Taj Mahal) */}
+              <path
+                d="
+                  M 0,176
+                  L 0,90
+                  C 0,45 70,8 198,2
+                  L 200,-4
+                  L 202,2
+                  C 330,8 400,45 400,90
+                  L 400,176
+                  Z
+                "
+                fill="url(#domeGlow)"
+                stroke="#D4AF37"
+                strokeWidth="2.5"
+                vectorEffect="non-scaling-stroke"
+                strokeLinejoin="round"
+              />
+              {/* Inner gold filigree (parallel offset) */}
+              <path
+                d="
+                  M 10,176
+                  L 10,92
+                  C 10,55 78,20 198,14
+                  L 200,9
+                  L 202,14
+                  C 322,20 390,55 390,92
+                  L 390,176
+                "
+                fill="none"
+                stroke="#D4AF37"
+                strokeOpacity="0.32"
+                strokeWidth="1"
+                vectorEffect="non-scaling-stroke"
+              />
+
+              {/* === LOTUS ROSETTE inside the keystone area === */}
+              <g transform="translate(200, 60)" opacity="0.7">
+                {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+                  <ellipse
+                    key={angle}
+                    cx="0"
+                    cy="-8"
+                    rx="3"
+                    ry="8"
+                    fill="#D4AF37"
+                    opacity="0.5"
+                    transform={`rotate(${angle})`}
+                  />
+                ))}
+                <circle cx="0" cy="0" r="3" fill="#D4AF37" />
+              </g>
+            </svg>
+          </div>
+
+          {/* RECTANGULAR BODY with subtle jali (lattice) pattern background */}
+          <div
+            className="flex-1 -mt-px bg-[#241712]/90 backdrop-blur-2xl border-x-[2.5px] border-b-[2.5px] border-classical-gold rounded-b-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative"
+            style={{
+              // Diamond jali pattern — extremely subtle, evokes carved haveli screens
+              backgroundImage:
+                "repeating-linear-gradient(45deg, rgba(229,169,55,0.035) 0 1px, transparent 1px 18px), repeating-linear-gradient(-45deg, rgba(229,169,55,0.035) 0 1px, transparent 1px 18px)",
+            }}
+          >
+            {/* Inner filigree line mirroring the body sides */}
+            <div className="absolute inset-2 border border-classical-gold/25 rounded-b-xl pointer-events-none"></div>
+
+            {/* === SUN-BURST CHHAJJA brackets where the arch meets the body === */}
+            <div className="absolute -top-4 left-3 pointer-events-none">
+              <svg width="32" height="20" viewBox="0 0 32 20">
+                <path d="M 16,18 L 4,4 M 16,18 L 10,2 M 16,18 L 16,0 M 16,18 L 22,2 M 16,18 L 28,4" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="16" cy="18" r="2.5" fill="#D4AF37" />
+              </svg>
+            </div>
+            <div className="absolute -top-4 right-3 pointer-events-none">
+              <svg width="32" height="20" viewBox="0 0 32 20">
+                <path d="M 16,18 L 4,4 M 16,18 L 10,2 M 16,18 L 16,0 M 16,18 L 22,2 M 16,18 L 28,4" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="16" cy="18" r="2.5" fill="#D4AF37" />
+              </svg>
+            </div>
+
+            {/* === Lotus rosettes at the bottom corners === */}
+            <div className="absolute bottom-2 left-2 pointer-events-none opacity-50">
+              <svg width="20" height="20" viewBox="-12 -12 24 24">
+                {[0, 60, 120, 180, 240, 300].map((angle) => (
+                  <ellipse key={angle} cx="0" cy="-5" rx="2" ry="5" fill="#D4AF37" transform={`rotate(${angle})`} />
+                ))}
+                <circle cx="0" cy="0" r="2" fill="#D4AF37" />
+              </svg>
+            </div>
+            <div className="absolute bottom-2 right-2 pointer-events-none opacity-50">
+              <svg width="20" height="20" viewBox="-12 -12 24 24">
+                {[0, 60, 120, 180, 240, 300].map((angle) => (
+                  <ellipse key={angle} cx="0" cy="-5" rx="2" ry="5" fill="#D4AF37" transform={`rotate(${angle})`} />
+                ))}
+                <circle cx="0" cy="0" r="2" fill="#D4AF37" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-20 p-8 md:p-14 pt-24">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">Analysis Engine</h2>
             <div className="h-1 w-16 bg-classical-gold mx-auto rounded-full mb-4 opacity-50"></div>
