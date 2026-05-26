@@ -93,14 +93,21 @@ def _probe_youtube_metadata(url: str) -> dict:
 @app.post("/probe")
 async def probe_audio(request: ProbeRequest):
     """Return duration (and title for YouTube) so the frontend can render a trim slider."""
-    url = request.audio_url
+    url = (request.audio_url or "").strip()
     if not is_youtube_url(url):
-        raise HTTPException(status_code=400, detail="Only YouTube URLs require probing; files report duration client-side.")
+        # Surface the rejected URL in server logs so frontend / format issues are easy to spot.
+        print(f"[/probe] Rejecting non-YouTube URL: {url!r}")
+        raise HTTPException(
+            status_code=400,
+            detail="That doesn't look like a YouTube URL. Paste a full link like https://www.youtube.com/watch?v=… or https://youtu.be/…",
+        )
     try:
         meta = await asyncio.to_thread(_probe_youtube_metadata, url)
         if meta["duration"] <= 0:
             raise HTTPException(status_code=400, detail="Could not determine video duration.")
         return meta
+    except HTTPException:
+        raise
     except yt_dlp.utils.DownloadError as e:
         raise HTTPException(status_code=400, detail=f"Failed to probe YouTube URL: {str(e)}")
     except Exception as e:
@@ -164,7 +171,7 @@ async def predict_taal(request: AudioRequest):
             librosa_offset_for_load,
             librosa_end if not is_youtube_url(url) else None,
         )
-        winner, confidence, chunk_timeline = result
+        winner, confidence, chunk_timeline, tempo_bpm = result
 
         # For YouTube with a crop, shift the timeline timestamps by start_time after the fact
         # (since librosa.load got offset=0 on the already-trimmed file).
@@ -176,10 +183,23 @@ async def predict_taal(request: AudioRequest):
         if not winner:
             return {"error": "Audio too quiet or no percussive beats detected."}
 
+        # --- Map BPM to Hindustani laya category ---
+        bpm_rounded = round(tempo_bpm)
+        if tempo_bpm <= 0:
+            laya = None
+        elif tempo_bpm < 60:
+            laya = {"name": "Vilambit", "devanagari": "विलम्बित", "english": "Slow"}
+        elif tempo_bpm < 120:
+            laya = {"name": "Madhya", "devanagari": "मध्य", "english": "Medium"}
+        else:
+            laya = {"name": "Drut", "devanagari": "द्रुत", "english": "Fast"}
+
         return {
             "prediction": winner.upper(),
             "confidence": round((confidence) * 100, 2),
             "timeline": chunk_timeline,
+            "tempo_bpm": bpm_rounded,
+            "laya": laya,
         }
         
     except ValueError as ve:

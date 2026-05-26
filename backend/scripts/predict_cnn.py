@@ -30,6 +30,9 @@ def predict_song_cnn(file_path, model_instance, class_labels, start_time=None, e
     If start_time / end_time are provided, only that segment of the file is decoded and
     analyzed. Timeline timestamps are reported in *original* file time (i.e. shifted by
     start_time) so the frontend visualizer matches the user's mental model of the song.
+
+    Returns:
+        winner (str | None), confidence (float), chunk_timeline (list[dict]), tempo_bpm (float)
     """
     try:
         load_kwargs = {"sr": 22050}
@@ -44,7 +47,15 @@ def predict_song_cnn(file_path, model_instance, class_labels, start_time=None, e
         y_full, sr = librosa.load(file_path, **load_kwargs)
     except Exception as e:
         print(f"Error loading audio: {e}")
-        return None, 0.0, []
+        return None, 0.0, [], 0.0
+
+    # --- TEMPO EXTRACTION (deterministic DSP layer over the CNN) ---
+    try:
+        tempo_raw, _ = librosa.beat.beat_track(y=y_full, sr=sr)
+        tempo_bpm = float(np.atleast_1d(tempo_raw)[0])
+    except Exception as e:
+        print(f"Tempo extraction failed: {e}")
+        tempo_bpm = 0.0
 
     clip_samples = 22050 * 20
     num_chunks = math.floor(librosa.get_duration(y=y_full, sr=sr) / 20)
@@ -90,10 +101,10 @@ def predict_song_cnn(file_path, model_instance, class_labels, start_time=None, e
         })
 
     if not predictions:
-        return None, 0.0, chunk_timeline
+        return None, 0.0, chunk_timeline, tempo_bpm
 
     vote_counts = Counter(predictions)
     winner, count = vote_counts.most_common(1)[0]
     confidence = count / len(predictions)
 
-    return winner, confidence, chunk_timeline
+    return winner, confidence, chunk_timeline, tempo_bpm

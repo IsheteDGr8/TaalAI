@@ -3,11 +3,17 @@ import yt_dlp
 
 def is_youtube_url(url: str) -> bool:
     """
-    Strictly validates if the incoming URL belongs to YouTube to prevent
-    Server-Side Request Forgery (SSRF) vulnerabilities.
+    Validates whether the URL belongs to YouTube (used as the SSRF gate for the
+    download path). Accepts any YouTube subdomain — www, m (mobile share),
+    music, gaming, etc. — and the short youtu.be host. Case-insensitive and
+    whitespace-tolerant so a copy-paste from a mobile share menu still works.
     """
-    youtube_regex = r'^(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+$'
-    return bool(re.match(youtube_regex, url))
+    if not url or not isinstance(url, str):
+        return False
+    # Allow zero-or-more subdomain segments (www., m., music., gaming., ...).
+    # Hostname segments use [\w-] which already covers a-z, A-Z, 0-9, and hyphen.
+    youtube_regex = r'^(?:https?://)?(?:[\w-]+\.)*(?:youtube\.com|youtu\.be)/.+$'
+    return bool(re.match(youtube_regex, url.strip(), re.IGNORECASE))
 
 def download_youtube_audio(url: str, output_path: str, start_time: float = None, end_time: float = None) -> str:
     """

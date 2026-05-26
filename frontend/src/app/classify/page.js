@@ -7,6 +7,120 @@ const MAX_RECORDING_SECONDS = 90;
 const MIN_CROP_SECONDS = 20;
 const MAX_CROP_SECONDS = 600;
 
+// Hindustani Classical metadata per Taal. `sam` = beat 1 (downbeat), `khali` = empty beat.
+const TAAL_INFO = {
+  TEENTAAL: {
+    devanagari: "तीनताल",
+    matras: 16,
+    vibhag: "4 + 4 + 4 + 4",
+    theka: ["Dha", "Dhin", "Dhin", "Dha", "Dha", "Dhin", "Dhin", "Dha", "Dha", "Tin", "Tin", "Ta", "Ta", "Dhin", "Dhin", "Dha"],
+    sam: [0],
+    khali: [8],
+  },
+  DADRA: {
+    devanagari: "दादरा",
+    matras: 6,
+    vibhag: "3 + 3",
+    theka: ["Dha", "Dhin", "Na", "Dha", "Tin", "Na"],
+    sam: [0],
+    khali: [3],
+  },
+  BHAJANI: {
+    devanagari: "भजनी",
+    matras: 8,
+    vibhag: "4 + 4",
+    theka: ["Dhin", "Na", "Dhin", "Dhin", "Na", "Tin", "Na", "Dhin"],
+    sam: [0],
+    khali: [4],
+  },
+};
+
+// --- Spectrogram view ("What the AI sees") --------------------------------
+// Lazily loads wavesurfer.js + its Spectrogram plugin and renders a Mel-style
+// spectrogram of the local audio File/Blob in the browser. No backend round trip.
+function SpectrogramView({ file }) {
+  const containerRef = useRef(null);
+  const wavesurferRef = useRef(null);
+  const [error, setError] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!file || !containerRef.current) return;
+
+    let destroyed = false;
+    let url = null;
+
+    (async () => {
+      try {
+        const { default: WaveSurfer } = await import("wavesurfer.js");
+        const { default: Spectrogram } = await import("wavesurfer.js/dist/plugins/spectrogram.esm.js");
+
+        if (destroyed) return;
+
+        url = URL.createObjectURL(file);
+
+        const ws = WaveSurfer.create({
+          container: containerRef.current,
+          waveColor: "#8B3A2B",
+          progressColor: "#D4AF37",
+          cursorColor: "#D4AF37",
+          height: 60,
+          barWidth: 2,
+          barRadius: 2,
+          interact: true,
+          url,
+        });
+
+        ws.registerPlugin(
+          Spectrogram.create({
+            labels: true,
+            labelsBackground: "rgba(36,23,18,0.85)",
+            labelsColor: "#D4AF37",
+            labelsHzColor: "#D4AF37",
+            height: 180,
+            frequencyMax: 8000,
+            splitChannels: false,
+          })
+        );
+
+        ws.on("ready", () => setReady(true));
+        wavesurferRef.current = ws;
+      } catch (err) {
+        console.error("[SpectrogramView] failed:", err);
+        setError(err.message || String(err));
+      }
+    })();
+
+    return () => {
+      destroyed = true;
+      if (wavesurferRef.current) {
+        try { wavesurferRef.current.destroy(); } catch (_) { /* ignore */ }
+        wavesurferRef.current = null;
+      }
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [file]);
+
+  return (
+    <div className="w-full">
+      {error && (
+        <p className="text-xs text-red-300/80 italic text-center mb-2">
+          Couldn&apos;t render spectrogram: {error}
+        </p>
+      )}
+      {!ready && !error && (
+        <p className="text-xs text-stone-400 italic text-center mb-2">Rendering spectrogram…</p>
+      )}
+      <div className="w-full bg-stone-900 rounded-md overflow-hidden border border-[#D4AF37]/30">
+        <div ref={containerRef} className="w-full" />
+      </div>
+      <p className="text-[10px] text-stone-400 italic text-center mt-2">
+        Top: waveform (loudness over time). Bottom: Mel spectrogram — the model&apos;s actual input. Brighter = more energy at that frequency.
+      </p>
+    </div>
+  );
+}
+
 // --- iPhone-style dual-thumb trim slider -----------------------------------
 function TrimSlider({ duration, minSpan, startSec, endSec, onChange, formatTime }) {
   const trackRef = useRef(null);
@@ -157,6 +271,7 @@ export default function Classify() {
   const [error, setError] = useState(null);
   const [feedbackStatus, setFeedbackStatus] = useState("idle"); // 'idle' | 'asking' | 'submitted'
   const [hoveredChunk, setHoveredChunk] = useState(null);
+  const [showSpectrogram, setShowSpectrogram] = useState(false);
 
   // --- Cropper state (slider-based) ---
   const [cropEnabled, setCropEnabled] = useState(false);
@@ -430,6 +545,7 @@ export default function Classify() {
 
     setFeedbackStatus("idle");
     setHoveredChunk(null);
+    setShowSpectrogram(false);
     setLoading(true);
     setError(null);
     setResult(null);
@@ -530,21 +646,29 @@ export default function Classify() {
       {/* --- THE JHAROKHA ARCHWAY CONTAINER --- */}
       <div className="max-w-2xl w-full relative z-10 pt-16">
 
-        {/* === KALASH FINIAL with mango leaves — traditional Indian pinnacle ===
-            Stacked dome (kalash water-pot) flanked by two stylized mango leaves. */}
+        {/* === HANGING LOTUS atop the apex — petals fan DOWNWARD like a temple chandelier ===
+            A 9-petal lotus whose seed-cup sits at the top, petals spreading down. */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 z-30 pointer-events-none">
-          <svg width="48" height="56" viewBox="0 0 48 56" className="drop-shadow-[0_2px_6px_rgba(229,169,55,0.4)]">
-            {/* Left mango leaf */}
-            <path d="M 24,40 Q 8,38 6,28 Q 14,30 24,40 Z" fill="#D4AF37" opacity="0.85" />
-            {/* Right mango leaf */}
-            <path d="M 24,40 Q 40,38 42,28 Q 34,30 24,40 Z" fill="#D4AF37" opacity="0.85" />
-            {/* Central stem rising from the leaves */}
-            <line x1="24" y1="40" x2="24" y2="18" stroke="#D4AF37" strokeWidth="2" />
-            {/* Top dome of the kalash */}
-            <circle cx="24" cy="16" r="4" fill="#D4AF37" />
-            {/* Tiny crowning bead */}
-            <circle cx="24" cy="8" r="2" fill="#D4AF37" />
-            <line x1="24" y1="10" x2="24" y2="12" stroke="#D4AF37" strokeWidth="1.5" />
+          <svg width="52" height="44" viewBox="-26 -8 52 44" className="drop-shadow-[0_2px_8px_rgba(229,169,55,0.5)]">
+            {/* Small attachment point at the very top (touches the arch) */}
+            <circle cx="0" cy="-6" r="1.5" fill="#D4AF37" />
+            <line x1="0" y1="-5" x2="0" y2="-1" stroke="#D4AF37" strokeWidth="1.2" />
+
+            {/* Terracotta seed-cup at the top of the lotus */}
+            <circle cx="0" cy="2" r="3.5" fill="#8B3A2B" />
+            <circle cx="0" cy="2" r="1.3" fill="#D4AF37" />
+
+            {/* 9 petals fanning downward (150° spread). Each petal points "south"
+                from the seed-cup, then rotated to fan out. */}
+            {[-72, -54, -36, -18, 0, 18, 36, 54, 72].map((angle) => (
+              <path
+                key={angle}
+                d="M 0,0 Q -5,12 0,24 Q 5,12 0,0 Z"
+                fill="#D4AF37"
+                opacity={Math.abs(angle) < 19 ? 0.92 : 0.78}
+                transform={`translate(0,2) rotate(${angle})`}
+              />
+            ))}
           </svg>
         </div>
 
@@ -604,22 +728,6 @@ export default function Classify() {
                 vectorEffect="non-scaling-stroke"
               />
 
-              {/* === LOTUS ROSETTE inside the keystone area === */}
-              <g transform="translate(200, 60)" opacity="0.7">
-                {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-                  <ellipse
-                    key={angle}
-                    cx="0"
-                    cy="-8"
-                    rx="3"
-                    ry="8"
-                    fill="#D4AF37"
-                    opacity="0.5"
-                    transform={`rotate(${angle})`}
-                  />
-                ))}
-                <circle cx="0" cy="0" r="3" fill="#D4AF37" />
-              </g>
             </svg>
           </div>
 
@@ -635,19 +743,39 @@ export default function Classify() {
             {/* Inner filigree line mirroring the body sides */}
             <div className="absolute inset-2 border border-classical-gold/25 rounded-b-xl pointer-events-none"></div>
 
-            {/* === SUN-BURST CHHAJJA brackets where the arch meets the body === */}
-            <div className="absolute -top-4 left-3 pointer-events-none">
-              <svg width="32" height="20" viewBox="0 0 32 20">
-                <path d="M 16,18 L 4,4 M 16,18 L 10,2 M 16,18 L 16,0 M 16,18 L 22,2 M 16,18 L 28,4" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="16" cy="18" r="2.5" fill="#D4AF37" />
-              </svg>
-            </div>
-            <div className="absolute -top-4 right-3 pointer-events-none">
-              <svg width="32" height="20" viewBox="0 0 32 20">
-                <path d="M 16,18 L 4,4 M 16,18 L 10,2 M 16,18 L 16,0 M 16,18 L 22,2 M 16,18 L 28,4" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="16" cy="18" r="2.5" fill="#D4AF37" />
-              </svg>
-            </div>
+            {/* === UPRIGHT LOTUS flanking the arch — 16 petals (8 outer + 8 inner) === */}
+            {[
+              { side: "left", className: "absolute -top-5 left-2 pointer-events-none" },
+              { side: "right", className: "absolute -top-5 right-2 pointer-events-none" },
+            ].map(({ side, className }) => (
+              <div key={side} className={className}>
+                <svg width="40" height="40" viewBox="-20 -20 40 40" className="drop-shadow-[0_1px_4px_rgba(229,169,55,0.4)]">
+                  {/* Outer ring of 8 petals */}
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+                    <path
+                      key={`outer-${angle}`}
+                      d="M 0,-16 Q -5,-10 0,-4 Q 5,-10 0,-16 Z"
+                      fill="#D4AF37"
+                      opacity="0.85"
+                      transform={`rotate(${angle})`}
+                    />
+                  ))}
+                  {/* Inner ring of 8 petals, offset by 22.5° */}
+                  {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map((angle) => (
+                    <path
+                      key={`inner-${angle}`}
+                      d="M 0,-10 Q -3,-6 0,-2 Q 3,-6 0,-10 Z"
+                      fill="#D4AF37"
+                      opacity="0.6"
+                      transform={`rotate(${angle})`}
+                    />
+                  ))}
+                  {/* Terracotta seed center */}
+                  <circle cx="0" cy="0" r="2.4" fill="#8B3A2B" />
+                  <circle cx="0" cy="0" r="1" fill="#D4AF37" />
+                </svg>
+              </div>
+            ))}
 
             {/* === Lotus rosettes at the bottom corners === */}
             <div className="absolute bottom-2 left-2 pointer-events-none opacity-50">
@@ -888,14 +1016,135 @@ export default function Classify() {
             <div className="flex flex-col items-center w-full mt-10 animate-fade-in-up relative z-10">
 
               {/* Main Prediction */}
-              <div ref={resultCardRef} className="w-full bg-[#FDF4DF] p-6 rounded-2xl border border-[#D4AF37] text-center shadow-md">
-                <p className="text-xs text-stone-500 uppercase tracking-widest font-semibold mb-2">Dominant Cycle</p>
-                <h2 className="text-4xl font-serif font-bold text-[#8B3A2B] mb-1 drop-shadow-sm">
+              <div ref={resultCardRef} className="w-full bg-[#FDF4DF] p-8 rounded-2xl border border-[#D4AF37] text-center shadow-md">
+                <p className="text-sm text-stone-500 uppercase tracking-[0.25em] font-semibold mb-3">Dominant Cycle</p>
+                <h2 className="text-5xl md:text-6xl font-serif font-bold text-[#8B3A2B] mb-1 drop-shadow-sm leading-tight">
                   {result.prediction}
                 </h2>
-                <p className="text-stone-700 font-medium text-sm">
-                  Confidence: <span className="font-bold text-stone-900">{result.confidence}%</span>
+                {TAAL_INFO[result.prediction] && (
+                  <p className="font-serif text-2xl md:text-3xl text-stone-600 mb-3">
+                    {TAAL_INFO[result.prediction].devanagari}
+                  </p>
+                )}
+                <p className="text-stone-700 font-medium text-base">
+                  Confidence: <span className="font-bold text-stone-900 text-lg">{result.confidence}%</span>
                 </p>
+
+                {/* === MATRA / VIBHAG / TEMPO INFO CHIPS === */}
+                {TAAL_INFO[result.prediction] && (() => {
+                  const info = TAAL_INFO[result.prediction];
+                  return (
+                    <div className="flex justify-center gap-3 mt-5 flex-wrap">
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#8B3A2B]/10 border border-[#8B3A2B]/25">
+                        <span className="text-xs uppercase tracking-widest text-stone-500">मात्रा</span>
+                        <span className="text-lg font-bold text-[#8B3A2B]">{info.matras}</span>
+                        <span className="text-xs text-stone-500">matras</span>
+                      </div>
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40">
+                        <span className="text-xs uppercase tracking-widest text-stone-500">विभाग</span>
+                        <span className="text-base font-bold text-stone-800 font-mono">{info.vibhag}</span>
+                      </div>
+                      {result.tempo_bpm > 0 && (
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-900/5 border border-stone-700/30">
+                          <span className="text-xs uppercase tracking-widest text-stone-500">लय</span>
+                          <span className="text-lg font-bold text-stone-800">{result.tempo_bpm}</span>
+                          <span className="text-xs text-stone-500">BPM</span>
+                          {result.laya && (
+                            <span className="text-xs font-semibold text-[#8B3A2B] ml-1">
+                              · {result.laya.devanagari} ({result.laya.english})
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* === THEKA BEAT GRID — visualizes every matra, with sam/khali markers === */}
+                {TAAL_INFO[result.prediction] && (() => {
+                  const info = TAAL_INFO[result.prediction];
+                  // Scale cell size: bigger for shorter cycles (Dadra=6, Bhajani=8), smaller for Teentaal=16.
+                  const cellPx = info.matras <= 8 ? 56 : 40;
+                  return (
+                    <div className="mt-7 pt-6 border-t border-[#D4AF37]/30">
+                      <p className="text-xs text-stone-500 uppercase tracking-[0.3em] font-semibold mb-4">
+                        ठेका · Theka
+                      </p>
+                      <div
+                        className="grid gap-2 mx-auto"
+                        style={{
+                          gridTemplateColumns: `repeat(${info.matras}, minmax(0, 1fr))`,
+                          maxWidth: `${info.matras * cellPx}px`,
+                        }}
+                      >
+                        {info.theka.map((bol, idx) => {
+                          const isSam = info.sam.includes(idx);
+                          const isKhali = info.khali.includes(idx);
+                          return (
+                            <div key={idx} className="flex flex-col items-center">
+                              <div
+                                className={`w-2.5 h-2.5 rounded-full mb-1.5 ${
+                                  isSam
+                                    ? "bg-[#8B3A2B] shadow-[0_0_6px_rgba(139,58,43,0.7)]"
+                                    : isKhali
+                                    ? "border-[1.5px] border-[#8B3A2B]/70 bg-transparent"
+                                    : "bg-[#D4AF37]"
+                                }`}
+                                title={isSam ? "Sam · beat 1" : isKhali ? "Khali · empty beat" : ""}
+                              ></div>
+                              <div
+                                className={`w-full aspect-square flex items-center justify-center rounded-md border text-sm font-serif font-medium ${
+                                  isSam
+                                    ? "bg-[#8B3A2B] text-[#FDF4DF] border-[#8B3A2B]"
+                                    : isKhali
+                                    ? "bg-transparent text-stone-500 border-[#8B3A2B]/40"
+                                    : "bg-white text-stone-700 border-[#D4AF37]/50"
+                                }`}
+                              >
+                                {bol}
+                              </div>
+                              <div className="text-[10px] text-stone-400 font-mono mt-1">{idx + 1}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-center gap-6 mt-4 text-xs text-stone-500">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#8B3A2B]"></span> Sam · सम (beat 1)
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full border-[1.5px] border-[#8B3A2B]/70"></span> Khali · खाली
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* === "WHAT THE AI SEES" — spectrogram toggle === */}
+                <div className="mt-6 pt-5 border-t border-[#D4AF37]/30">
+                  <button
+                    type="button"
+                    onClick={() => setShowSpectrogram((s) => !s)}
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-900/5 border border-stone-700/30 hover:bg-stone-900/10 cursor-pointer transition-colors"
+                  >
+                    <span className="text-base">🔬</span>
+                    <span className="text-xs uppercase tracking-widest font-semibold text-stone-700">
+                      {showSpectrogram ? "Hide" : "Show"} what the AI sees
+                    </span>
+                  </button>
+                  {showSpectrogram && (
+                    <div className="mt-4 animate-fade-in">
+                      {file ? (
+                        <SpectrogramView file={file} />
+                      ) : (
+                        <p className="text-xs text-stone-500 italic text-center py-4">
+                          Spectrogram is only available for file uploads and live mic recordings.
+                          For YouTube, the original audio is processed server-side and not stored.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* THE TIMELINE VISUALIZER */}
                 {result.timeline && result.timeline.length > 0 && (() => {
