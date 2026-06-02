@@ -64,6 +64,11 @@
         sub { font-size: 38px !important; line-height: 1.45 !important; margin-bottom: 20px !important; color: #fbf9f9 !important; }
         strong { color: #4A2E1B; font-weight: 800; }
 
+        .interface-caption {
+            color: #1a1008 !important;
+            font-weight: 600;
+        }
+
         .box {
             background: white;
             border-radius: 35px;
@@ -93,6 +98,51 @@
         }
         .img-placeholder span { font-size: 36px !important; }
         .img-placeholder small { font-size: 24px !important; color: #666; font-weight: normal; margin-top: 10px; }
+
+        /* Real-image container.
+           CRITICAL: flex-basis: 0 prevents the image's intrinsic size from
+           becoming the flex item's starting size. Without this, a 1024x920
+           screenshot blows up to ~988px tall and the column overflows the page.
+           min-height/min-width: 0 lets the item shrink below content size. */
+        .poster-img {
+            background: #ffffff;
+            border: 4px solid rgba(227, 186, 69, 0.5);
+            border-radius: 20px;
+            padding: 10px;
+            flex-basis: 0 !important;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .poster-img img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Variant: sizes the container to the image's natural aspect so
+           wide-but-short screenshots (e.g. the spectrogram) don't sit inside
+           a tall flex box with whitespace bands above and below. */
+        .poster-img-fit {
+            background: #ffffff;
+            border: 4px solid rgba(227, 186, 69, 0.5);
+            border-radius: 20px;
+            padding: 10px;
+            overflow: hidden;
+            flex: 0 0 auto;
+            display: block;
+        }
+        .poster-img-fit img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
 
         /* Metric Styles */
         .metric-container {
@@ -132,8 +182,8 @@
 
         <main class="grid grid-cols-3 gap-10 flex-grow min-h-0">
             
-            <section class="flex flex-col h-full gap-8">
-                <div class="box flex-grow flex flex-col">
+            <section class="flex flex-col h-full gap-8 min-h-0">
+                <div class="box flex-grow flex flex-col min-h-0">
                     <h3 class="font-serif font-bold text-walnut">1. Motivation & Problem</h3>
                     <ul class="list-disc pl-14 mb-8">
                         <li><strong>The Cultural Gap:</strong> Based on 18 years of Tabla experience, identifying improvisational rhythms (Taals) requires massive ear-training, acting as a steep barrier for students.</li>
@@ -143,87 +193,73 @@
 
                     <h3 class="font-serif font-bold text-walnut mt-4">2. Architecture & Pipeline</h3>
                     <ul class="list-disc pl-14 mb-8">
-                        <li><strong>Decoupled Stack:</strong> Next.js frontend handles ingestion; FastAPI handles high-memory TensorFlow inference via asynchronous execution on local host.</li>
+                        <li><strong>Decoupled Edge Stack:</strong> Next.js frontend handles ingestion; Dockerized FastAPI handles high-memory TensorFlow inference.</li>
                         <li><strong>Feature Extraction:</strong> <code>librosa</code> chunks audio arrays into normalized <strong>128x862 2D Mel-Spectrograms</strong> (0.0 to 1.0) to prevent dying gradients.</li>
                         <li><strong>Temporal Constraints:</strong> Standard CNNs destroy time sequences. Implemented <strong>MaxPooling2D(2,3)</strong> to rigorously preserve the horizontal time dimension.</li>
                         <li><strong>Democratic Voting:</strong> The backend classifies every 20-second chunk. Chunks below a <strong>50% confidence threshold</strong> are discarded to protect the final output.</li>
                     </ul>
 
-                    <div class="img-placeholder mt-auto flex-grow" style="min-height: 250px;">
-                        <span>[System Architecture Diagram]</span>
-                        <small>Show the flow from UI -> FastAPI -> Model -> Supabase</small>
+                    <div class="poster-img mt-auto flex-grow" style="min-height: 320px;">
+                        <img src="UI/Architecture.svg" alt="End-to-end system architecture: User Input to FastAPI Backend to CNN Model to Results, with a Supabase feedback loop back to training" />
                     </div>
                 </div>
             </section>
 
-            <section class="flex flex-col h-full">
-                <div class="box border-[12px] border-gold bg-cream flex flex-col h-full mb-0">
+            <section class="flex flex-col h-full min-h-0">
+                <div class="box border-[12px] border-gold bg-cream flex flex-col h-full mb-0 min-h-0">
                     <h3 class="font-serif font-bold text-walnut text-center" style="border: none !important; padding: 0 !important; margin-bottom: 25px !important;">The Application Interface</h3>
                     
-                    <div class="img-placeholder mb-4 flex-[0.8]" style="min-height: 150px;">
-                        <span>[1. Audio Ingestion & Trimming UI]</span>
-                        <small>Show the Multi-thumb Range Slider.</small>
+                    <div class="poster-img-fit mb-4">
+                        <img src="UI/Taal%20AI.jpg" alt="Taal AI landing page hero: 'Decoding the Ancient Beat' with Enter The Studio CTA" />
                     </div>
-                    <p class="text-center mb-6 leading-tight shrink-0" style="font-size: 32px !important;"><strong>Smart Slicing:</strong> Bypassing non-percussive audio at the frontend prevents loading massive files into RAM, drastically optimizing local execution speeds.</p>
+                    <p class="interface-caption text-center mb-6 leading-tight shrink-0" style="font-size: 34px !important;"><strong>Bridging Hindustani Aesthetics and Deep Learning:</strong> a culturally-grounded landing page funnels users into the CNN-powered analysis engine.</p>
 
-                    <div class="img-placeholder mb-6 flex-[1.2]" style="min-height: 200px;">
-                        <span>[2. Classification Results & Timeline UI]</span>
-                        <small>Show the Rajasthani UI Card & Color-Coded Rhythmic chunks.</small>
+                    <div class="poster-img mb-6 flex-[1.2]" style="min-height: 200px;">
+                        <img src="UI/Output%20Card.jpg" alt="Classification result card showing BHAJANI prediction, matras, vibhag, BPM, theka grid, and color-coded rhythmic timeline" />
                     </div>
 
-                    <div class="img-placeholder mb-4 flex-1" style="min-height: 150px;">
-                        <span>[3. Waveform vs Spectrogram UI]</span>
-                        <small>Show the "What the AI Sees" expanded view.</small>
+                    <div class="poster-img-fit mb-4">
+                        <img src="UI/Spectrogram.jpg" alt="Waveform on top, Mel spectrogram on bottom — the What the AI Sees view" />
                     </div>
-                    <p class="text-center mt-2 mb-0 leading-tight shrink-0" style="font-size: 32px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
+                    <p class="interface-caption text-center mt-2 mb-0 leading-tight shrink-0" style="font-size: 34px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
                 </div>
             </section>
 
-            <section class="flex flex-col h-full gap-8">
-                <div class="box flex-grow flex flex-col">
+            <section class="flex flex-col h-full gap-8 min-h-0">
+                <div class="box flex-grow flex flex-col min-h-0">
                     <h3 class="font-serif font-bold text-walnut">3. Engineering Outcomes</h3>
                     
-                    <div class="grid grid-cols-2 gap-6 mb-8 shrink-0">
+                    <div class="grid grid-cols-2 gap-6 mb-6 shrink-0">
                         <div class="metric-container">
                             <div class="metric-value">81.8%</div>
                             <div class="metric-label">System Accuracy</div>
                         </div>
                         <div class="metric-container">
                             <div class="metric-value">1,266</div>
-                            <div class="metric-label">Dataset Clips Extracted</div>
+                            <div class="metric-label">Custom Audio Clips Extracted</div>
                         </div>
                     </div>
 
-                    <h3 class="font-serif font-bold text-walnut mt-2">4. Model Evaluation & Performance</h3>
-                    <p class="mb-4 leading-tight" style="font-size: 32px !important;">Visual proof of CNN performance across the custom multi-class dataset (Teentaal, Bhajani, and Dadra):</p>
+                    <h3 class="font-serif font-bold text-walnut mt-4">4. Training Convergence</h3>
+                    <p class="mb-4 text-[#232323]" style="font-size: 34px !important; line-height: 1.4 !important;">30 epochs over 858 spectrogram tensors carried the CNN from <strong>39% to 95% training accuracy</strong>. The <strong>82% validation lock</strong> &mdash; a 13-point generalization gap &mdash; defines the exact frontier the <strong>Data Flywheel</strong> is engineered to close, one user correction at a time.</p>
                     
-                    <!-- DUAL IMAGE PLACEHOLDERS FOR ACADEMIC GRAPHICS -->
-                    <div class="flex gap-6 mb-6 flex-grow">
-                        <div class="img-placeholder flex-1" style="min-height: 220px;">
-                            <span>[Confusion Matrix]</span>
-                            <small class="px-4">Show class-wise accuracy distribution</small>
-                        </div>
-                        <div class="img-placeholder flex-1" style="min-height: 220px;">
-                            <span>[Training Metrics]</span>
-                            <small class="px-4">Show Loss/Accuracy vs Epochs graph</small>
-                        </div>
+                    <div class="poster-img mt-2 mb-6 flex-grow" style="min-height: 220px;">
+                        <img src="UI/TrainingAccuracy.jpg" alt="CNN training log over 30 epochs reaching 95% training and 82% validation accuracy" />
                     </div>
 
-                    <h3 class="font-serif font-bold text-walnut mt-auto">5. Future Scope</h3>
+                    <h3 class="font-serif font-bold text-walnut mt-4">5. Future Scope</h3>
                     <ul class="list-disc pl-14 mb-0">
-                        <li><strong>The Data Flywheel:</strong> Integrated a Supabase PostgreSQL feedback module allowing users to explicitly correct the AI's classification. This builds an automated crowdsourced pipeline to retrain Version 2.0.</li>
-                        <li><strong>DSP Expansion:</strong> Upgrading the backend to track song BPM via librosa's <code>beat_track</code> function to localize the <em>Sam</em> (anchor beat).</li>
+                        <li><strong>Sam Localization &rarr; AI Accompaniment:</strong> Pivot from per-chunk classification to attention-based <em>frame-level</em> labeling that pinpoints each cycle's anchor beat (<em>Sam</em>). Foundation for a real-time AI tabla that auto-locks to a vocalist's tempo &mdash; turning Taal AI from passive analyzer into active musical partner.</li>
+                        <li><strong>Taxonomy Expansion via Transfer:</strong> Scale to 10+ canonical Taals (Jhaptaal, Rupak, Ektaal, Keherwa, Chautal) by freezing the convolutional backbone and fine-tuning only the dense head &mdash; new classes ship in hours, not weeks.</li>
                     </ul>
                 </div>
 
-                <!-- SLIMMED DOWN QR CODE BANNER -->
-                <div class="bg-walnut rounded-[25px] p-6 flex items-center justify-between shadow-xl border-[6px] border-walnut shrink-0">
-                    <div class="w-3/4 pr-4">
-                        <h3 class="font-serif font-black text-gold border-none mb-1 pb-0" style="font-size: 45px !important;">Live Video Demo</h3>
-                        <sub class="m-0" style="font-size: 28px !important; line-height: 1.2 !important;">Scan the QR code to watch the system demonstration.</sub>
+                <div class="bg-walnut text-white rounded-[35px] p-6 flex items-center justify-between shadow-xl border-[8px] border-walnut shrink-0">
+                    <div class="w-1/2 pr-2 pl-6">
+                        <h3 class="font-serif font-black text-gold border-none m-0 pb-0" style="font-size: 65px !important; line-height: 1.1 !important;">Live<br>Demo</h3>
                     </div>
-                    <div class="w-1/4 bg-cream p-3 rounded-[18px] shadow-inner flex items-center justify-center">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://youtu.be/xpcdG-Yh_k4" alt="YouTube Demo QR Code" class="w-full h-auto rounded-[12px]" />
+                    <div class="bg-cream p-4 rounded-[24px] shadow-inner flex items-center justify-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://youtu.be/xpcdG-Yh_k4" alt="YouTube Demo QR Code" class="w-[180px] h-[180px] rounded-[16px]" />
                     </div>
                 </div>
             </section>

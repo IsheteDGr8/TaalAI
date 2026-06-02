@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1600 900"
+     width="1600" height="900"
+     preserveAspectRatio="xMidYMid meet"
+     font-family="Inter, system-ui, sans-serif">
+
+  <defs>
+    <marker id="arrow-walnut" viewBox="0 0 12 12" refX="11" refY="6"
+            markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 z" fill="#4A2E1B"/>
+    </marker>
+    <marker id="arrow-crimson" viewBox="0 0 12 12" refX="11" refY="6"
+            markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 z" fill="#8B3A2B"/>
+    </marker>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#4A2E1B" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- ========================== HEADER ============================ -->
+  <text x="800" y="58" font-family="Merriweather, serif" font-size="44"
+        font-weight="900" fill="#4A2E1B" text-anchor="middle">
+    End-to-End System Architecture
+  </text>
+  <line x1="520" y1="80" x2="1080" y2="80" stroke="#E3BA45" stroke-width="4"/>
+
+  <!-- ====================== STAGE 1: INPUT ======================== -->
+  <g transform="translate(30, 130)">
+    <rect width="320" height="410" rx="22" fill="#FFFFFF"
+          stroke="#E3BA45" stroke-width="5" filter="url(#card-shadow)"/>
+
+    <!-- Number badge + title row, both vertically centered at y=54 -->
+    <circle cx="48" cy="54" r="32" fill="#4A2E1B"/>
+    <text x="48" y="54" font-family="Merriweather, serif" font-size="38"
+          font-weight="900" fill="#E3BA45" text-anchor="middle"
+          dominant-baseline="central">1</text>
+
+    <text x="96" y="44" font-size="32" font-weight="900" fill="#4A2E1B"
+          dominant-baseline="central">USER INPUT</text>
+    <text x="96" y="72" font-size="20" font-weight="600" fill="#8B6F4A"
+          dominant-baseline="central">Next.js Frontend</text>
+
+    <line x1="22" y1="110" x2="298" y2="110" stroke="#E3BA45" stroke-width="3"/>
+
+    <g font-size="27" fill="#212121">
+      <circle cx="40" cy="150" r="6" fill="#E3BA45"/>
+      <text x="58" y="150" dominant-baseline="central">Audio File Upload</text>
+
+      <circle cx="40" cy="195" r="6" fill="#E3BA45"/>
+      <text x="58" y="195" dominant-baseline="central">YouTube URL</text>
+
+      <circle cx="40" cy="240" r="6" fill="#E3BA45"/>
+      <text x="58" y="240" dominant-baseline="central">Live Microphone</text>
+    </g>
+
+    <line x1="22" y1="290" x2="298" y2="290" stroke="#E3BA45" stroke-width="2" stroke-dasharray="5,5"/>
+    <g font-size="22" font-style="italic" fill="#8B6F4A">
+      <text x="36" y="328" dominant-baseline="central">Trim slider crops the</text>
+      <text x="36" y="358" dominant-baseline="central">section client-side,</text>
+      <text x="36" y="388" dominant-baseline="central">stages to Supabase.</text>
+    </g>
+  </g>
+
+  <!-- Arrow 1 to 2 -->
+  <line x1="355" y1="335" x2="425" y2="335"
+        stroke="#4A2E1B" stroke-width="7" marker-end="url(#arrow-walnut)"/>
+
+  <!-- ====================== STAGE 2: BACKEND ====================== -->
+  <g transform="translate(430, 130)">
+    <rect width="320" height="410" rx="22" fill="#FFFFFF"
+          stroke="#E3BA45" stroke-width="5" filter="url(#card-shadow)"/>
+
+    <circle cx="48" cy="54" r="32" fill="#4A2E1B"/>
+    <text x="48" y="54" font-family="Merriweather, serif" font-size="38"
+          font-weight="900" fill="#E3BA45" text-anchor="middle"
+          dominant-baseline="central">2</text>
+
+    <text x="96" y="44" font-size="32" font-weight="900" fill="#4A2E1B"
+          dominant-baseline="central">BACKEND</text>
+    <text x="96" y="72" font-size="20" font-weight="600" fill="#8B6F4A"
+          dominant-baseline="central">FastAPI + librosa</text>
+
+    <line x1="22" y1="110" x2="298" y2="110" stroke="#E3BA45" stroke-width="3"/>
+
+    <g font-size="26" fill="#212121">
+      <circle cx="40" cy="150" r="6" fill="#E3BA45"/>
+      <text x="58" y="150" dominant-baseline="central">yt-dlp segment fetch</text>
+
+      <circle cx="40" cy="190" r="6" fill="#E3BA45"/>
+      <text x="58" y="190" dominant-baseline="central">20-second chunking</text>
+
+      <circle cx="40" cy="230" r="6" fill="#E3BA45"/>
+      <text x="58" y="230" dominant-baseline="central">Mel-Spectrogram</text>
+      <text x="78" y="258" font-size="20" fill="#8B6F4A" dominant-baseline="central">128 x 862 tensor</text>
+
+      <circle cx="40" cy="295" r="6" fill="#E3BA45"/>
+      <text x="58" y="295" dominant-baseline="central">beat_track to BPM</text>
+    </g>
+
+    <line x1="22" y1="335" x2="298" y2="335" stroke="#E3BA45" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="36" y="372" font-size="22" font-style="italic" fill="#8B6F4A"
+          dominant-baseline="central">Async thread-pooled,</text>
+    <text x="36" y="395" font-size="22" font-style="italic" fill="#8B6F4A"
+          dominant-baseline="central">non-blocking I/O.</text>
+  </g>
+
+  <!-- Arrow 2 to 3 -->
+  <line x1="755" y1="335" x2="825" y2="335"
+        stroke="#4A2E1B" stroke-width="7" marker-end="url(#arrow-walnut)"/>
+
+  <!-- ====================== STAGE 3: CNN ========================== -->
+  <g transform="translate(830, 130)">
+    <rect width="320" height="410" rx="22" fill="#FFFFFF"
+          stroke="#E3BA45" stroke-width="5" filter="url(#card-shadow)"/>
+
+    <circle cx="48" cy="54" r="32" fill="#4A2E1B"/>
+    <text x="48" y="54" font-family="Merriweather, serif" font-size="38"
+          font-weight="900" fill="#E3BA45" text-anchor="middle"
+          dominant-baseline="central">3</text>
+
+    <text x="96" y="44" font-size="32" font-weight="900" fill="#4A2E1B"
+          dominant-baseline="central">CNN MODEL</text>
+    <text x="96" y="72" font-size="20" font-weight="600" fill="#8B6F4A"
+          dominant-baseline="central">TensorFlow / Keras</text>
+
+    <line x1="22" y1="110" x2="298" y2="110" stroke="#E3BA45" stroke-width="3"/>
+
+    <g font-size="26" fill="#212121">
+      <circle cx="40" cy="150" r="6" fill="#E3BA45"/>
+      <text x="58" y="150" dominant-baseline="central">3 x Conv2D + Pool</text>
+
+      <circle cx="40" cy="190" r="6" fill="#E3BA45"/>
+      <text x="58" y="190" dominant-baseline="central">MaxPool(2, 3)</text>
+      <text x="78" y="218" font-size="20" fill="#8B6F4A" dominant-baseline="central">preserves time axis</text>
+
+      <circle cx="40" cy="255" r="6" fill="#E3BA45"/>
+      <text x="58" y="255" dominant-baseline="central">Dense + Softmax</text>
+
+      <circle cx="40" cy="295" r="6" fill="#E3BA45"/>
+      <text x="58" y="295" dominant-baseline="central">Democratic vote</text>
+      <text x="78" y="323" font-size="20" fill="#8B6F4A" dominant-baseline="central">50% confidence floor</text>
+    </g>
+
+    <line x1="22" y1="355" x2="298" y2="355" stroke="#E3BA45" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="36" y="388" font-size="22" font-style="italic" fill="#8B6F4A"
+          dominant-baseline="central">3-class softmax over Taals.</text>
+  </g>
+
+  <!-- Arrow 3 to 4 -->
+  <line x1="1155" y1="335" x2="1225" y2="335"
+        stroke="#4A2E1B" stroke-width="7" marker-end="url(#arrow-walnut)"/>
+
+  <!-- ====================== STAGE 4: RESULTS ====================== -->
+  <g transform="translate(1230, 130)">
+    <rect width="340" height="410" rx="22" fill="#FFFFFF"
+          stroke="#E3BA45" stroke-width="5" filter="url(#card-shadow)"/>
+
+    <circle cx="48" cy="54" r="32" fill="#4A2E1B"/>
+    <text x="48" y="54" font-family="Merriweather, serif" font-size="38"
+          font-weight="900" fill="#E3BA45" text-anchor="middle"
+          dominant-baseline="central">4</text>
+
+    <text x="96" y="44" font-size="32" font-weight="900" fill="#4A2E1B"
+          dominant-baseline="central">RESULTS</text>
+    <text x="96" y="72" font-size="20" font-weight="600" fill="#8B6F4A"
+          dominant-baseline="central">UI Display</text>
+
+    <line x1="22" y1="110" x2="318" y2="110" stroke="#E3BA45" stroke-width="3"/>
+
+    <g font-size="27" fill="#212121">
+      <circle cx="40" cy="150" r="6" fill="#E3BA45"/>
+      <text x="58" y="150" dominant-baseline="central">Taal + Confidence</text>
+
+      <circle cx="40" cy="195" r="6" fill="#E3BA45"/>
+      <text x="58" y="195" dominant-baseline="central">BPM + Laya category</text>
+
+      <circle cx="40" cy="240" r="6" fill="#E3BA45"/>
+      <text x="58" y="240" dominant-baseline="central">Chunk-level Timeline</text>
+
+      <circle cx="40" cy="285" r="6" fill="#E3BA45"/>
+      <text x="58" y="285" dominant-baseline="central">Spectrogram view</text>
+
+      <circle cx="40" cy="330" r="6" fill="#E3BA45"/>
+      <text x="58" y="330" dominant-baseline="central">Interactive Theka Grid</text>
+    </g>
+
+    <line x1="22" y1="370" x2="318" y2="370" stroke="#E3BA45" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="36" y="395" font-size="22" font-style="italic" fill="#8B6F4A"
+          dominant-baseline="central">PNG export + share.</text>
+  </g>
+
+  <!-- ======================= FEEDBACK LOOP ======================== -->
+
+  <!-- Down + left: from Stage 4 bottom-center to Supabase right edge -->
+  <path d="M 1400,540 L 1400,675 L 1115,675"
+        stroke="#8B3A2B" stroke-width="6" fill="none"
+        stroke-dasharray="14,10"
+        marker-end="url(#arrow-crimson)"/>
+
+  <text x="1255" y="615" font-size="22" font-style="italic"
+        font-weight="600" fill="#8B3A2B" text-anchor="middle"
+        dominant-baseline="central">"Is this correct?"</text>
+
+  <!-- ====================== STAGE 5: SUPABASE ===================== -->
+  <g transform="translate(465, 600)">
+    <rect width="640" height="180" rx="22" fill="#4A2E1B"
+          stroke="#E3BA45" stroke-width="5" filter="url(#card-shadow)"/>
+
+    <!-- Header row: badge + title, both vertically centered at y=48 -->
+    <circle cx="48" cy="48" r="26" fill="#8B3A2B"/>
+    <text x="48" y="48" font-family="Merriweather, serif" font-size="32"
+          font-weight="900" fill="#FDF8F0" text-anchor="middle"
+          dominant-baseline="central">5</text>
+
+    <text x="90" y="40" font-size="30" font-weight="900" fill="#E3BA45"
+          dominant-baseline="central">DATA FLYWHEEL</text>
+    <text x="90" y="68" font-size="20" font-weight="600" fill="#FDF8F0"
+          dominant-baseline="central">Supabase Postgres + Continuous Learning</text>
+
+    <line x1="22" y1="100" x2="618" y2="100" stroke="#E3BA45" stroke-width="2" stroke-dasharray="5,5"/>
+
+    <!-- Body: 2 short lines that fit inside the 640px box width -->
+    <text x="22" y="130" font-size="22" fill="#FDF8F0"
+          dominant-baseline="central">Every user correction is stored as a labelled clip,</text>
+    <text x="22" y="160" font-size="22" fill="#FDF8F0"
+          dominant-baseline="central">building the next retrain set for CNN v2.</text>
+  </g>
+
+  <!-- Left + up: from Supabase left edge back to Stage 1 bottom-center -->
+  <path d="M 465,675 L 190,675 L 190,540"
+        stroke="#8B3A2B" stroke-width="6" fill="none"
+        stroke-dasharray="14,10"
+        marker-end="url(#arrow-crimson)"/>
+
+  <text x="320" y="615" font-size="22" font-style="italic"
+        font-weight="600" fill="#8B3A2B" text-anchor="middle"
+        dominant-baseline="central">retrain feedback</text>
+
+  <!-- ========================= FOOTER LEGEND ====================== -->
+  <g transform="translate(40, 845)">
+    <line x1="0" y1="14" x2="60" y2="14" stroke="#4A2E1B" stroke-width="6"/>
+    <text x="78" y="14" font-size="22" font-weight="600" fill="#4A2E1B"
+          dominant-baseline="central">Real-time inference pipeline</text>
+
+    <line x1="500" y1="14" x2="560" y2="14" stroke="#8B3A2B" stroke-width="6" stroke-dasharray="10,6"/>
+    <text x="578" y="14" font-size="22" font-weight="600" fill="#8B3A2B"
+          dominant-baseline="central">Async training feedback loop</text>
+  </g>
+
+  <!-- Tech-stack chips bottom-right: pulled inside the viewBox -->
+  <g transform="translate(1040, 832)" font-size="20" font-weight="600">
+    <text x="0" y="14" font-size="22" fill="#8B6F4A" dominant-baseline="central">Stack:</text>
+
+    <rect x="62" y="-2" width="105" height="32" rx="16" fill="#FDF8F0" stroke="#E3BA45" stroke-width="2"/>
+    <text x="114" y="14" fill="#4A2E1B" text-anchor="middle" dominant-baseline="central">Next.js</text>
+
+    <rect x="177" y="-2" width="105" height="32" rx="16" fill="#FDF8F0" stroke="#E3BA45" stroke-width="2"/>
+    <text x="229" y="14" fill="#4A2E1B" text-anchor="middle" dominant-baseline="central">FastAPI</text>
+
+    <rect x="292" y="-2" width="130" height="32" rx="16" fill="#FDF8F0" stroke="#E3BA45" stroke-width="2"/>
+    <text x="357" y="14" fill="#4A2E1B" text-anchor="middle" dominant-baseline="central">TensorFlow</text>
+
+    <rect x="432" y="-2" width="115" height="32" rx="16" fill="#FDF8F0" stroke="#E3BA45" stroke-width="2"/>
+    <text x="489" y="14" fill="#4A2E1B" text-anchor="middle" dominant-baseline="central">Supabase</text>
+  </g>
+
+</svg>
