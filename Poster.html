@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taal AI - Capstone Poster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        walnut: '#4A2E1B', /* Deep instrument wood */
+                        gold: '#E3BA45',   /* Brightened gold for better contrast */
+                        cream: '#FDF8F0',  /* High contrast reading text */
+                        charcoal: '#212121', /* Soft black for readability */
+                    },
+                    fontFamily: {
+                        serif: ['Merriweather', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* BULLETPROOF SINGLE-PAGE & PRINT COLOR LOCK */
+        * { 
+            box-sizing: border-box !important; 
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        
+        @page { size: 48in 36in; margin: 0; }
+
+        body {
+            width: 48in;
+            height: 36in;
+            margin: 0;
+            padding: 0;
+            background-color: #FDF8F0;
+            background-image: radial-gradient(rgba(227, 186, 69, 0.4) 2px, transparent 2px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            overflow: hidden; 
+            position: relative;
+        }
+
+        .poster-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            padding: 80px 100px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SCALED TYPOGRAPHY */
+        h1 { font-size: 140px !important; color: #f0cc67;line-height: 1.05 !important; letter-spacing: -2px !important; }
+        h3 { font-size: 80px !important; border-bottom: 12px solid #E3BA45 !important; padding-bottom: 15px !important; margin-bottom: 30px !important; }
+        p, li { font-size: 38px !important; line-height: 1.45 !important; margin-bottom: 20px !important; color: #232323 !important; }
+        sub { font-size: 38px !important; line-height: 1.45 !important; margin-bottom: 20px !important; color: #fbf9f9 !important; }
+        strong { color: #4A2E1B; font-weight: 800; }
+
+        .box {
+            background: white;
+            border-radius: 35px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border: 4px solid rgba(227, 186, 69, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Auto-squishing Image Placeholders */
+        .img-placeholder {
+            width: 100%;
+            background: #f8f8f8;
+            border: 8px dashed rgba(227, 186, 69, 0.6);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #4A2E1B;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            flex-grow: 1;
+            min-height: 0;
+        }
+        .img-placeholder span { font-size: 36px !important; }
+        .img-placeholder small { font-size: 24px !important; color: #666; font-weight: normal; margin-top: 10px; }
+
+        /* Metric Styles */
+        .metric-container {
+            background: #FDF8F0;
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            border: 3px solid #E3BA45;
+        }
+        .metric-value { font-size: 90px !important; font-weight: 900; color: #E3BA45; line-height: 1; font-family: 'Merriweather', serif; }
+        .metric-label { font-size: 26px !important; font-weight: 700; color: #4A2E1B; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
+    </style>
+</head>
+<body class="font-sans text-charcoal">
+
+    <div class="poster-container">
+        
+        <header class="bg-walnut rounded-[40px] p-12 mb-10 shadow-2xl flex items-center relative overflow-hidden border-[8px] border-gold shrink-0">
+            <div class="w-3/4 flex flex-col justify-center pl-8 z-10">
+                <sub class="font-sans font-bold text-gold tracking-widest uppercase mb-4" style="font-size: 36px !important;">Capstone Project | CSS 497</sub>
+                
+                <h1 class="font-serif font-black leading-tight mb-8">Taal AI: Intelligent Rhythmic Classification in Indian Classical Music</h1>
+                
+                <div class="flex items-center gap-10 border-t-[4px] border-gold/50 pt-6">
+                    <h2 class="font-sans font-black text-gold m-0" style="font-size: 90px !important;">Ishaan Shete</h2>
+                    <div class="h-[80px] w-[6px] bg-gold/50"></div>
+                    <sub class="font-sans font-black text-gold m-0" style="font-size: 70px !important;">Advisor: Jeffrey Kim</sub>
+                    <div class="h-[80px] w-[6px] bg-gold/50"></div>
+                    <sub class="font-sans font-black text-gold m-0" style="font-size: 70px !important;">Spring 2026</sub>
+                </div>
+            </div>
+
+            <div class="w-1/4 flex justify-center items-center z-10">
+                <div class="w-[360px] h-[360px] bg-cream rounded-full flex items-center justify-center text-walnut font-serif shadow-2xl border-[16px] border-gold" style="font-size: 140px !important; font-weight: 900;">UW</div>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-3 gap-10 flex-grow min-h-0">
+            
+            <section class="flex flex-col h-full gap-8">
+                <div class="box flex-grow flex flex-col">
+                    <h3 class="font-serif font-bold text-walnut">1. Motivation & Problem</h3>
+                    <ul class="list-disc pl-14 mb-8">
+                        <li><strong>The Cultural Gap:</strong> Based on 18 years of Tabla experience, identifying improvisational rhythms (Taals) requires massive ear-training, acting as a steep barrier for students.</li>
+                        <li><strong>The Acoustic Obstacle:</strong> Automated beat detection easily fails when dense acoustic noise, specifically fluid vocal timbres (Alaap) and melodic instruments, overlaps the percussion.</li>
+                        <li><strong>The ML Innovation:</strong> Converting DSP waves into a <strong>Computer Vision paradigm</strong>. The CNN tracks the visual "stripes" of drum strikes in a Mel-Spectrogram, circumventing vocal interference.</li>
+                    </ul>
+
+                    <h3 class="font-serif font-bold text-walnut mt-4">2. Architecture & Pipeline</h3>
+                    <ul class="list-disc pl-14 mb-8">
+                        <li><strong>Decoupled Stack:</strong> Next.js frontend handles ingestion; FastAPI handles high-memory TensorFlow inference via asynchronous execution on local host.</li>
+                        <li><strong>Feature Extraction:</strong> <code>librosa</code> chunks audio arrays into normalized <strong>128x862 2D Mel-Spectrograms</strong> (0.0 to 1.0) to prevent dying gradients.</li>
+                        <li><strong>Temporal Constraints:</strong> Standard CNNs destroy time sequences. Implemented <strong>MaxPooling2D(2,3)</strong> to rigorously preserve the horizontal time dimension.</li>
+                        <li><strong>Democratic Voting:</strong> The backend classifies every 20-second chunk. Chunks below a <strong>50% confidence threshold</strong> are discarded to protect the final output.</li>
+                    </ul>
+
+                    <div class="img-placeholder mt-auto flex-grow" style="min-height: 250px;">
+                        <span>[System Architecture Diagram]</span>
+                        <small>Show the flow from UI -> FastAPI -> Model -> Supabase</small>
+                    </div>
+                </div>
+            </section>
+
+            <section class="flex flex-col h-full">
+                <div class="box border-[12px] border-gold bg-cream flex flex-col h-full mb-0">
+                    <h3 class="font-serif font-bold text-walnut text-center" style="border: none !important; padding: 0 !important; margin-bottom: 25px !important;">The Application Interface</h3>
+                    
+                    <div class="img-placeholder mb-4 flex-[0.8]" style="min-height: 150px;">
+                        <span>[1. Audio Ingestion & Trimming UI]</span>
+                        <small>Show the Multi-thumb Range Slider.</small>
+                    </div>
+                    <p class="text-center mb-6 leading-tight shrink-0" style="font-size: 32px !important;"><strong>Smart Slicing:</strong> Bypassing non-percussive audio at the frontend prevents loading massive files into RAM, drastically optimizing local execution speeds.</p>
+
+                    <div class="img-placeholder mb-6 flex-[1.2]" style="min-height: 200px;">
+                        <span>[2. Classification Results & Timeline UI]</span>
+                        <small>Show the Rajasthani UI Card & Color-Coded Rhythmic chunks.</small>
+                    </div>
+
+                    <div class="img-placeholder mb-4 flex-1" style="min-height: 150px;">
+                        <span>[3. Waveform vs Spectrogram UI]</span>
+                        <small>Show the "What the AI Sees" expanded view.</small>
+                    </div>
+                    <p class="text-center mt-2 mb-0 leading-tight shrink-0" style="font-size: 32px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
+                </div>
+            </section>
+
+            <section class="flex flex-col h-full gap-8">
+                <div class="box flex-grow flex flex-col">
+                    <h3 class="font-serif font-bold text-walnut">3. Engineering Outcomes</h3>
+                    
+                    <div class="grid grid-cols-2 gap-6 mb-8 shrink-0">
+                        <div class="metric-container">
+                            <div class="metric-value">81.8%</div>
+                            <div class="metric-label">System Accuracy</div>
+                        </div>
+                        <div class="metric-container">
+                            <div class="metric-value">1,266</div>
+                            <div class="metric-label">Dataset Clips Extracted</div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-serif font-bold text-walnut mt-2">4. Model Evaluation & Performance</h3>
+                    <p class="mb-4 leading-tight" style="font-size: 32px !important;">Visual proof of CNN performance across the custom multi-class dataset (Teentaal, Bhajani, and Dadra):</p>
+                    
+                    <!-- DUAL IMAGE PLACEHOLDERS FOR ACADEMIC GRAPHICS -->
+                    <div class="flex gap-6 mb-6 flex-grow">
+                        <div class="img-placeholder flex-1" style="min-height: 220px;">
+                            <span>[Confusion Matrix]</span>
+                            <small class="px-4">Show class-wise accuracy distribution</small>
+                        </div>
+                        <div class="img-placeholder flex-1" style="min-height: 220px;">
+                            <span>[Training Metrics]</span>
+                            <small class="px-4">Show Loss/Accuracy vs Epochs graph</small>
+                        </div>
+                    </div>
+
+                    <h3 class="font-serif font-bold text-walnut mt-auto">5. Future Scope</h3>
+                    <ul class="list-disc pl-14 mb-0">
+                        <li><strong>The Data Flywheel:</strong> Integrated a Supabase PostgreSQL feedback module allowing users to explicitly correct the AI's classification. This builds an automated crowdsourced pipeline to retrain Version 2.0.</li>
+                        <li><strong>DSP Expansion:</strong> Upgrading the backend to track song BPM via librosa's <code>beat_track</code> function to localize the <em>Sam</em> (anchor beat).</li>
+                    </ul>
+                </div>
+
+                <!-- SLIMMED DOWN QR CODE BANNER -->
+                <div class="bg-walnut rounded-[25px] p-6 flex items-center justify-between shadow-xl border-[6px] border-walnut shrink-0">
+                    <div class="w-3/4 pr-4">
+                        <h3 class="font-serif font-black text-gold border-none mb-1 pb-0" style="font-size: 45px !important;">Live Video Demo</h3>
+                        <sub class="m-0" style="font-size: 28px !important; line-height: 1.2 !important;">Scan the QR code to watch the system demonstration.</sub>
+                    </div>
+                    <div class="w-1/4 bg-cream p-3 rounded-[18px] shadow-inner flex items-center justify-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://youtu.be/xpcdG-Yh_k4" alt="YouTube Demo QR Code" class="w-full h-auto rounded-[12px]" />
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

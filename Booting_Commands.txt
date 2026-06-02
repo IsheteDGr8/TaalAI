@@ -1,12 +1,83 @@
-# backend
-if active already: deactivate
+================================================================================
+  TAAL AI - HOW TO BOOT THE APP (Windows / PowerShell)
+================================================================================
 
-rmdir /s /q venv
-py -3.10 -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn main:app --reload
+You need TWO terminals running side-by-side: one for the backend (FastAPI),
+one for the frontend (Next.js). Both must stay open while you use the app.
 
-# frontend 
-npm install
-npm run dev
+Open the app at:   http://localhost:3000
+
+--------------------------------------------------------------------------------
+  DAILY BOOT (after a laptop restart) -- do this every time
+--------------------------------------------------------------------------------
+
+>>> TERMINAL 1 - BACKEND <<<
+    cd "C:\Users\ishaa\OneDrive - UW\Spring 2026\CSS 497_Capstone Project\Development\backend"
+    .\venv\Scripts\Activate.ps1
+    uvicorn main:app --reload
+
+    Wait for:  "Loading weights..." -> "Model weights loaded successfully!"
+               -> "Uvicorn running on http://127.0.0.1:8000"
+
+>>> TERMINAL 2 - FRONTEND <<<
+    cd "C:\Users\ishaa\OneDrive - UW\Spring 2026\CSS 497_Capstone Project\Development\frontend"
+    npm run dev
+
+    Wait for:  "Local: http://localhost:3000"
+
+Then open  http://localhost:3000  in your browser.
+
+To stop either server: focus that terminal and press Ctrl+C.
+
+--------------------------------------------------------------------------------
+  FIRST-TIME SETUP (only after fresh clone, or if venv/node_modules are broken)
+--------------------------------------------------------------------------------
+
+Backend (one-time):
+    cd "C:\Users\ishaa\OneDrive - UW\Spring 2026\CSS 497_Capstone Project\Development\backend"
+    # If a broken venv exists already:
+    if (Test-Path venv) { Remove-Item -Recurse -Force venv }
+    py -3.10 -m venv venv
+    .\venv\Scripts\Activate.ps1
+    pip install -r requirements.txt
+
+Frontend (one-time):
+    cd "C:\Users\ishaa\OneDrive - UW\Spring 2026\CSS 497_Capstone Project\Development\frontend"
+    npm install
+
+After that, follow DAILY BOOT above.
+
+--------------------------------------------------------------------------------
+  ENVIRONMENT VARIABLES (must exist before you boot)
+--------------------------------------------------------------------------------
+
+frontend\.env.local must contain:
+    NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+    NEXT_PUBLIC_SUPABASE_URL=...
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+
+If you change .env.local, restart the frontend (Ctrl+C, then `npm run dev`).
+
+--------------------------------------------------------------------------------
+  TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+PowerShell refuses to run Activate.ps1 ("running scripts is disabled"):
+    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned    # one-time
+    Then try Activate.ps1 again.
+
+Backend says "ModuleNotFoundError" or fails to import something:
+    The venv is stale. Redo FIRST-TIME SETUP (backend).
+
+Frontend page loads but /classify or /theory hangs forever (stuck compile):
+    Stop the dev server (Ctrl+C), wipe the Next.js cache, then restart:
+        cd "C:\Users\ishaa\OneDrive - UW\Spring 2026\CSS 497_Capstone Project\Development\frontend"
+        if (Test-Path .next) { Remove-Item -Recurse -Force .next }
+        npm run dev
+
+Port already in use ("address already in use" on 8000 or 3000):
+    Find and kill the stuck process:
+        Get-NetTCPConnection -LocalPort 3000 -State Listen | ForEach-Object {
+            Stop-Process -Id $_.OwningProcess -Force
+        }
+    (Replace 3000 with 8000 for the backend port.)
