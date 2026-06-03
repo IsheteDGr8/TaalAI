@@ -69,6 +69,10 @@
             font-weight: 600;
         }
 
+        .interface-panel {
+            padding: 28px !important;
+        }
+
         .box {
             background: white;
             border-radius: 35px;
@@ -144,6 +148,24 @@
             display: block;
         }
 
+        /* Bhajani: full card, natural aspect — overrides width:100% above */
+        .poster-img-fit.bhajani-full {
+            text-align: center;
+        }
+        .poster-img-fit.bhajani-full img {
+            width: auto;
+            max-width: 100%;
+            max-height: 630px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .poster-img-fit.spectrogram-offset {
+            margin-top: 68px;
+        }
+
         /* Metric Styles */
         .metric-container {
             background: #FDF8F0;
@@ -206,22 +228,22 @@
             </section>
 
             <section class="flex flex-col h-full min-h-0">
-                <div class="box border-[12px] border-gold bg-cream flex flex-col h-full mb-0 min-h-0">
-                    <h3 class="font-serif font-bold text-walnut text-center" style="border: none !important; padding: 0 !important; margin-bottom: 25px !important;">The Application Interface</h3>
+                <div class="box interface-panel border-[12px] border-gold bg-cream flex flex-col h-full mb-0 min-h-0">
+                    <h3 class="font-serif font-bold text-walnut text-center" style="border: none !important; padding: 0 !important; margin-bottom: 12px !important;">The Application Interface</h3>
                     
-                    <div class="poster-img-fit mb-4">
+                    <div class="poster-img-fit mb-2">
                         <img src="UI/Taal%20AI.jpg" alt="Taal AI landing page hero: 'Decoding the Ancient Beat' with Enter The Studio CTA" />
                     </div>
-                    <p class="interface-caption text-center mb-6 leading-tight shrink-0" style="font-size: 34px !important;"><strong>Bridging Hindustani Aesthetics and Deep Learning:</strong> a culturally-grounded landing page funnels users into the CNN-powered analysis engine.</p>
+                    <p class="interface-caption text-center mb-3 leading-tight shrink-0" style="font-size: 32px !important; margin-bottom: 12px !important;"><strong>Bridging Hindustani Aesthetics and Deep Learning:</strong> a culturally-grounded landing page funnels users into the CNN-powered analysis engine.</p>
 
-                    <div class="poster-img mb-6 flex-[1.2]" style="min-height: 200px;">
-                        <img src="UI/Output%20Card.jpg" alt="Classification result card showing BHAJANI prediction, matras, vibhag, BPM, theka grid, and color-coded rhythmic timeline" />
+                    <div class="poster-img-fit bhajani-full mb-2">
+                        <img src="UI/Bhajani.jpg" alt="Bhajani classification result: 92.31% confidence, 8 matras, theka grid with Sam and Khali beats" />
                     </div>
 
-                    <div class="poster-img-fit mb-4">
+                    <div class="poster-img-fit spectrogram-offset mb-2">
                         <img src="UI/Spectrogram.jpg" alt="Waveform on top, Mel spectrogram on bottom — the What the AI Sees view" />
                     </div>
-                    <p class="interface-caption text-center mt-2 mb-0 leading-tight shrink-0" style="font-size: 34px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
+                    <p class="interface-caption text-center mt-0 mb-0 leading-tight shrink-0" style="font-size: 32px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
                 </div>
             </section>
 
