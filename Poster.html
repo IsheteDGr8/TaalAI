@@ -60,7 +60,8 @@
         /* SCALED TYPOGRAPHY */
         h1 { font-size: 140px !important; color: #f0cc67;line-height: 1.05 !important; letter-spacing: -2px !important; }
         h3 { font-size: 80px !important; border-bottom: 12px solid #E3BA45 !important; padding-bottom: 15px !important; margin-bottom: 30px !important; }
-        p, li { font-size: 38px !important; line-height: 1.45 !important; margin-bottom: 20px !important; color: #232323 !important; }
+        p, li { font-size: 44px !important; line-height: 1.42 !important; margin-bottom: 18px !important; color: #232323 !important; }
+        code { font-size: 40px !important; }
         sub { font-size: 38px !important; line-height: 1.45 !important; margin-bottom: 20px !important; color: #fbf9f9 !important; }
         strong { color: #4A2E1B; font-weight: 800; }
 
@@ -70,7 +71,7 @@
         }
 
         .interface-panel {
-            padding: 28px !important;
+            padding: 20px !important;
         }
 
         .box {
@@ -142,24 +143,312 @@
             flex: 0 0 auto;
             display: block;
         }
-        .poster-img-fit img {
+        .poster-img-fit img,
+        .poster-img-fit object {
             width: 100%;
             height: auto;
             display: block;
         }
 
-        /* Bhajani: full card, natural aspect — overrides width:100% above */
-        .poster-img-fit.bhajani-full {
-            text-align: center;
+        /* Bhajani UI: fill available column space */
+        .bhajani-hero {
+            flex: 1 1 auto;
+            min-height: 0;
+            width: 100%;
+            background: #ffffff;
+            border: 4px solid rgba(227, 186, 69, 0.5);
+            border-radius: 20px;
+            padding: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .poster-img-fit.bhajani-full img {
-            width: auto;
-            max-width: 100%;
-            max-height: 630px;
-            height: auto;
+        .bhajani-hero img {
+            width: 100%;
+            height: 100%;
+            max-height: none !important;
             object-fit: contain;
             display: block;
-            margin: 0 auto;
+        }
+
+        .spectrogram-note {
+            color: #1a1008 !important;
+            font-weight: 600;
+            font-size: 40px !important;
+            line-height: 1.35 !important;
+            margin-bottom: 16px !important;
+        }
+
+        .pipeline-diagram-wrap {
+            flex: 1 1 0;
+            min-height: 0;
+            max-height: calc(100% - 460px);
+            overflow: hidden;
+            margin-top: 16px;
+            margin-bottom: 22px;
+            display: flex;
+            flex-direction: column;
+        }
+        .pipeline-diagram-wrap .poster-img-fit {
+            flex: 1 1 auto;
+            min-height: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            border: 6px solid #4A2E1B !important;
+            border-radius: 22px;
+            padding: 12px;
+            background: #FDF8F0;
+        }
+        .pipeline-diagram-wrap object,
+        .pipeline-diagram-wrap img {
+            width: 100%;
+            max-height: 100%;
+            height: auto;
+            object-fit: contain;
+            object-position: top center;
+            display: block;
+        }
+
+        .convergence-strip {
+            background: linear-gradient(to right, #4A2E1B 8px, #FDF8F0 8px);
+            border-radius: 22px;
+            border: 2px solid rgba(227, 186, 69, 0.75);
+            padding: 20px 22px 18px 26px;
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .convergence-title {
+            font-family: 'Merriweather', serif !important;
+            font-size: 38px !important;
+            font-weight: 900 !important;
+            color: #4A2E1B !important;
+            margin: 0 0 16px !important;
+            letter-spacing: 0.3px;
+        }
+        .conv-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .conv-row {
+            display: grid;
+            grid-template-columns: 96px 52% 1fr;
+            align-items: center;
+            column-gap: 16px;
+        }
+        .conv-label {
+            font-size: 30px !important;
+            font-weight: 800;
+            color: #4A2E1B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 !important;
+        }
+        .conv-track {
+            height: 44px;
+            background: #FFFFFF;
+            border-radius: 22px;
+            border: 3px solid rgba(227, 186, 69, 0.55);
+            overflow: hidden;
+        }
+        .conv-fill {
+            height: 100%;
+            border-radius: 19px;
+        }
+        .conv-fill-train {
+            width: 95%;
+            background: linear-gradient(90deg, #8B6F4A 0%, #4A2E1B 100%);
+        }
+        .conv-fill-val {
+            width: 82%;
+            background: linear-gradient(90deg, #E3BA45 0%, #c9a035 100%);
+        }
+        .conv-stat {
+            font-size: 38px !important;
+            font-weight: 700;
+            color: #4A2E1B;
+            margin: 0 !important;
+            line-height: 1.15 !important;
+            text-align: left;
+        }
+        .conv-stat-muted {
+            color: #8B6F4A;
+            font-weight: 600;
+        }
+        .conv-stat strong {
+            color: #4A2E1B;
+            font-weight: 900;
+        }
+        .conv-gap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 6px 0 18px;
+            padding: 8px 0;
+        }
+        .conv-gap-line {
+            flex: 1;
+            max-width: 160px;
+            height: 0;
+            border-top: 4px dashed #8B3A2B;
+            opacity: 0.8;
+        }
+        .conv-gap-text {
+            font-size: 36px !important;
+            font-weight: 800;
+            color: #8B3A2B !important;
+            margin: 0 !important;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .pipeline-context-list {
+            margin-bottom: 20px !important;
+        }
+        .pipeline-context-list li {
+            margin-bottom: 12px !important;
+        }
+        .pipeline-context-list li:last-child {
+            margin-bottom: 0 !important;
+        }
+        .solution-list li:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .lessons-panel {
+            flex: 0 0 auto;
+            margin-top: 0;
+            background: linear-gradient(to right, #4A2E1B 8px, #FDF8F0 8px);
+            border-radius: 22px;
+            border: 2px solid rgba(227, 186, 69, 0.75);
+            padding: 20px 22px 18px 28px;
+        }
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .lesson-card {
+            background: #FFFFFF;
+            border: 2px solid rgba(227, 186, 69, 0.55);
+            border-radius: 16px;
+            padding: 18px 20px 18px 16px;
+            display: grid;
+            grid-template-columns: 52px 1fr;
+            gap: 14px;
+            align-items: center;
+            min-height: 108px;
+        }
+        .lesson-num {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #4A2E1B;
+            color: #E3BA45;
+            font-family: 'Merriweather', serif;
+            font-size: 30px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .lesson-title {
+            font-family: 'Merriweather', serif;
+            font-size: 36px !important;
+            font-weight: 800 !important;
+            line-height: 1.28 !important;
+            margin: 0 !important;
+            color: #4A2E1B !important;
+        }
+        .conv-flywheel {
+            text-align: left;
+            padding: 14px 8px 0 12px;
+            border-top: 2px dashed rgba(227, 186, 69, 0.5);
+            margin: 0 !important;
+        }
+        .conv-flywheel-line {
+            font-size: 34px !important;
+            font-weight: 600;
+            color: #4A2E1B !important;
+            line-height: 1.32 !important;
+            margin: 0 0 10px !important;
+        }
+        .conv-flywheel-line:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .header-badge-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            flex-shrink: 0;
+            margin-left: -12px;
+            padding-left: 0;
+        }
+        .header-divider {
+            width: 6px;
+            align-self: stretch;
+            min-height: 436px;
+            background: rgba(227, 186, 69, 0.55);
+            border-radius: 3px;
+            flex-shrink: 0;
+            margin-right: 44px;
+        }
+        .header-uw {
+            width: 436px;
+            height: 436px;
+            background: #FDF8F0;
+            border-radius: 50%;
+            border: 12px solid #E3BA45;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Merriweather', serif;
+            font-size: 152px;
+            font-weight: 900;
+            color: #4A2E1B;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+            flex-shrink: 0;
+            margin-right: 52px;
+        }
+        .header-qr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-qr-box {
+            background: #FDF8F0;
+            padding: 28px;
+            border-radius: 32px;
+            border: 10px solid #E3BA45;
+            box-shadow:
+                0 0 0 6px rgba(227, 186, 69, 0.35),
+                0 24px 56px rgba(0, 0, 0, 0.32),
+                inset 0 2px 10px rgba(74, 46, 27, 0.08);
+        }
+        .header-qr-box img {
+            width: 360px;
+            height: 360px;
+            border-radius: 16px;
+            display: block;
+        }
+        .header-qr-label {
+            font-family: 'Merriweather', serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: #E3BA45;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
         }
 
         .poster-img-fit.spectrogram-offset {
@@ -174,114 +463,166 @@
             text-align: center;
             border: 3px solid #E3BA45;
         }
-        .metric-value { font-size: 90px !important; font-weight: 900; color: #E3BA45; line-height: 1; font-family: 'Merriweather', serif; }
-        .metric-label { font-size: 26px !important; font-weight: 700; color: #4A2E1B; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
+        .metric-value { font-size: 72px !important; font-weight: 900; color: #E3BA45; line-height: 1; font-family: 'Merriweather', serif; }
+        .metric-label { font-size: 22px !important; font-weight: 700; color: #4A2E1B; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; line-height: 1.2 !important; }
     </style>
 </head>
 <body class="font-sans text-charcoal">
 
     <div class="poster-container">
         
-        <header class="bg-walnut rounded-[40px] p-12 mb-10 shadow-2xl flex items-center relative overflow-hidden border-[8px] border-gold shrink-0">
-            <div class="w-3/4 flex flex-col justify-center pl-8 z-10">
+        <header class="bg-walnut rounded-[40px] p-12 mb-10 shadow-2xl flex items-center gap-4 relative overflow-hidden border-[8px] border-gold shrink-0">
+            <div class="flex-1 flex flex-col justify-center pl-0 z-10 min-w-0">
                 <sub class="font-sans font-bold text-gold tracking-widest uppercase mb-4" style="font-size: 36px !important;">Capstone Project | CSS 497</sub>
                 
-                <h1 class="font-serif font-black leading-tight mb-8">Taal AI: Intelligent Rhythmic Classification in Indian Classical Music</h1>
+                <h1 class="font-serif font-black leading-tight mb-8">Taal AI: Intelligent Rhythmic Classification<br>in Indian Classical Music</h1>
                 
                 <div class="flex items-center gap-10 border-t-[4px] border-gold/50 pt-6">
                     <h2 class="font-sans font-black text-gold m-0" style="font-size: 90px !important;">Ishaan Shete</h2>
                     <div class="h-[80px] w-[6px] bg-gold/50"></div>
-                    <sub class="font-sans font-black text-gold m-0" style="font-size: 70px !important;">Advisor: Jeffrey Kim</sub>
+                    <sub class="font-sans font-black text-gold m-0" style="font-size: 70px !important;">Prof. Jeffrey Kim</sub>
                     <div class="h-[80px] w-[6px] bg-gold/50"></div>
                     <sub class="font-sans font-black text-gold m-0" style="font-size: 70px !important;">Spring 2026</sub>
                 </div>
             </div>
 
-            <div class="w-1/4 flex justify-center items-center z-10">
-                <div class="w-[360px] h-[360px] bg-cream rounded-full flex items-center justify-center text-walnut font-serif shadow-2xl border-[16px] border-gold" style="font-size: 140px !important; font-weight: 900;">UW</div>
+            <div class="header-badge-row z-10">
+                <div class="header-divider" aria-hidden="true"></div>
+                <div class="header-uw">UW</div>
+                <div class="header-qr-wrap">
+                    <div class="header-qr-box">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://youtu.be/xpcdG-Yh_k4" alt="YouTube Live Demo QR Code" />
+                    </div>
+                    <span class="header-qr-label">Live Demo</span>
+                </div>
             </div>
         </header>
 
         <main class="grid grid-cols-3 gap-10 flex-grow min-h-0">
             
-            <section class="flex flex-col h-full gap-8 min-h-0">
+            <!-- COLUMN 1: Problem Statement → Architecture diagram → Solution -->
+            <section class="flex flex-col h-full min-h-0">
                 <div class="box flex-grow flex flex-col min-h-0">
-                    <h3 class="font-serif font-bold text-walnut">1. Motivation & Problem</h3>
-                    <ul class="list-disc pl-14 mb-8">
-                        <li><strong>The Cultural Gap:</strong> Based on 18 years of Tabla experience, identifying improvisational rhythms (Taals) requires massive ear-training, acting as a steep barrier for students.</li>
-                        <li><strong>The Acoustic Obstacle:</strong> Automated beat detection easily fails when dense acoustic noise, specifically fluid vocal timbres (Alaap) and melodic instruments, overlaps the percussion.</li>
-                        <li><strong>The ML Innovation:</strong> Converting DSP waves into a <strong>Computer Vision paradigm</strong>. The CNN tracks the visual "stripes" of drum strikes in a Mel-Spectrogram, circumventing vocal interference.</li>
+                    <h3 class="font-serif font-bold text-walnut shrink-0">Problem Statement</h3>
+                    <ul class="list-disc pl-14 mb-4 shrink-0">
+                        <li><strong>Ear-Training Barrier:</strong> Based on 18 years of Tabla experience, Taal identification requires massive ear-training, acting as a steep barrier for students.</li>
+                        <li><strong>Acoustic Obstacle:</strong> Acoustic noise (i.e. vocal timbres and instruments) overlapping the percussion makes beat detection difficult.</li>
                     </ul>
 
-                    <h3 class="font-serif font-bold text-walnut mt-4">2. Architecture & Pipeline</h3>
-                    <ul class="list-disc pl-14 mb-8">
-                        <li><strong>Decoupled Edge Stack:</strong> Next.js frontend handles ingestion; Dockerized FastAPI handles high-memory TensorFlow inference.</li>
-                        <li><strong>Feature Extraction:</strong> <code>librosa</code> chunks audio arrays into normalized <strong>128x862 2D Mel-Spectrograms</strong> (0.0 to 1.0) to prevent dying gradients.</li>
-                        <li><strong>Temporal Constraints:</strong> Standard CNNs destroy time sequences. Implemented <strong>MaxPooling2D(2,3)</strong> to rigorously preserve the horizontal time dimension.</li>
-                        <li><strong>Democratic Voting:</strong> The backend classifies every 20-second chunk. Chunks below a <strong>50% confidence threshold</strong> are discarded to protect the final output.</li>
-                    </ul>
-
-                    <div class="poster-img mt-auto flex-grow" style="min-height: 320px;">
+                    <div class="poster-img shrink-0 mb-4" style="min-height: 320px; flex-basis: auto !important;">
                         <img src="UI/Architecture.svg" alt="End-to-end system architecture: User Input to FastAPI Backend to CNN Model to Results, with a Supabase feedback loop back to training" />
                     </div>
+
+                    <h3 class="font-serif font-bold text-walnut shrink-0">Solution</h3>
+                    <ul class="list-disc pl-14 mb-0 shrink-0 solution-list">
+                        <li><strong>Vision Approach:</strong> Treat rhythm as <strong>2D spectrogram images</strong> so a CNN ignores vocal and instrumental bleed.</li>
+                        <li><strong>Time-Aware CNN:</strong> MaxPool(2,3) preserves horizontal beat patterns across the time axis.</li>
+                        <li><strong>Chunk Voting:</strong> Score each 20s segment; discard predictions below 50% confidence.</li>
+                    </ul>
+
+                    <h3 class="font-serif font-bold text-walnut shrink-0" style="margin-bottom: 18px !important;">Challenges &amp; Lessons Learned</h3>
+                    <div class="lessons-panel shrink-0">
+                        <div class="lessons-grid">
+                            <div class="lesson-card">
+                                <span class="lesson-num">1</span>
+                                <p class="lesson-title">13-point train–val gap exposed CNN overfitting</p>
+                            </div>
+                            <div class="lesson-card">
+                                <span class="lesson-num">2</span>
+                                <p class="lesson-title">Free-tier CPU hosting limits live inference</p>
+                            </div>
+                            <div class="lesson-card">
+                                <span class="lesson-num">3</span>
+                                <p class="lesson-title">No public Taal data — hand labeling was the bottleneck</p>
+                            </div>
+                            <div class="lesson-card">
+                                <span class="lesson-num">4</span>
+                                <p class="lesson-title">Vocal bleed breaks beat detection — mel images required</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
+            <!-- COLUMN 2: Training pipeline + convergence -->
             <section class="flex flex-col h-full min-h-0">
-                <div class="box interface-panel border-[12px] border-gold bg-cream flex flex-col h-full mb-0 min-h-0">
-                    <h3 class="font-serif font-bold text-walnut text-center" style="border: none !important; padding: 0 !important; margin-bottom: 12px !important;">The Application Interface</h3>
-                    
-                    <div class="poster-img-fit mb-2">
-                        <img src="UI/Taal%20AI.jpg" alt="Taal AI landing page hero: 'Decoding the Ancient Beat' with Enter The Studio CTA" />
-                    </div>
-                    <p class="interface-caption text-center mb-3 leading-tight shrink-0" style="font-size: 32px !important; margin-bottom: 12px !important;"><strong>Bridging Hindustani Aesthetics and Deep Learning:</strong> a culturally-grounded landing page funnels users into the CNN-powered analysis engine.</p>
+                <div class="box flex-grow flex flex-col min-h-0 h-full" style="overflow: hidden;">
+                    <h3 class="font-serif font-bold text-walnut shrink-0">Model Training Pipeline</h3>
+                    <ul class="list-disc pl-14 shrink-0 pipeline-context-list">
+                        <li><strong>No public dataset:</strong> Taal-labeled training audio is not available online; all 1,266 clips were recorded and annotated by hand.</li>
+                        <li><strong>Training vs. labeling:</strong> 30 CNN epochs on CPU finish in ~3 minutes; manual labeling was the real bottleneck.</li>
+                    </ul>
 
-                    <div class="poster-img-fit bhajani-full mb-2">
-                        <img src="UI/Bhajani.jpg" alt="Bhajani classification result: 92.31% confidence, 8 matras, theka grid with Sam and Khali beats" />
+                    <div class="pipeline-diagram-wrap">
+                        <div class="poster-img-fit">
+                            <object data="UI/TrainingPipeline.svg" type="image/svg+xml"
+                                    aria-label="CNN training pipeline: labeled clips to mel-spectrogram features, train/val split, Keras training, and Docker deployment">
+                                <img src="UI/TrainingPipeline.svg" alt="CNN training pipeline diagram" />
+                            </object>
+                        </div>
                     </div>
 
-                    <div class="poster-img-fit spectrogram-offset mb-2">
-                        <img src="UI/Spectrogram.jpg" alt="Waveform on top, Mel spectrogram on bottom — the What the AI Sees view" />
+                    <div class="convergence-strip shrink-0 mb-0">
+                        <p class="convergence-title">Training Convergence</p>
+                        <div class="conv-metrics">
+                            <div class="conv-row">
+                                <span class="conv-label">Train</span>
+                                <div class="conv-track"><div class="conv-fill conv-fill-train"></div></div>
+                                <span class="conv-stat"><span class="conv-stat-muted">39%</span> &rarr; <strong>95%</strong></span>
+                            </div>
+                            <div class="conv-row">
+                                <span class="conv-label">Val</span>
+                                <div class="conv-track"><div class="conv-fill conv-fill-val"></div></div>
+                                <span class="conv-stat"><strong>82%</strong> peak</span>
+                            </div>
+                        </div>
+                        <div class="conv-gap">
+                            <span class="conv-gap-line"></span>
+                            <span class="conv-gap-text">13-point gap</span>
+                            <span class="conv-gap-line"></span>
+                        </div>
+                        <div class="conv-flywheel">
+                            <p class="conv-flywheel-line"><strong>Data Flywheel:</strong> Wrong Taal fixes in the app are stored in Supabase.</p>
+                            <p class="conv-flywheel-line">Each correction becomes a new labeled clip for the next CNN training run.</p>
+                        </div>
                     </div>
-                    <p class="interface-caption text-center mt-0 mb-0 leading-tight shrink-0" style="font-size: 32px !important;">Translating complex tensor arrays into a visually digestible user interface.</p>
                 </div>
             </section>
 
-            <section class="flex flex-col h-full gap-8 min-h-0">
-                <div class="box flex-grow flex flex-col min-h-0">
-                    <h3 class="font-serif font-bold text-walnut">3. Engineering Outcomes</h3>
-                    
-                    <div class="grid grid-cols-2 gap-6 mb-6 shrink-0">
+            <!-- COLUMN 3: Live demo UI → Future + Outcomes -->
+            <section class="flex flex-col h-full gap-6 min-h-0">
+                <div class="box interface-panel border-[12px] border-gold bg-cream flex flex-col min-h-0 flex-grow">
+                    <h3 class="font-serif font-bold text-walnut shrink-0" style="margin-bottom: 12px !important; padding-bottom: 10px !important;">Taal Identification Results</h3>
+                    <div class="bhajani-hero" style="flex: 1 1 auto; min-height: 0;">
+                        <img src="UI/Bhajani.jpg" alt="Live demo UI identifying Dadra: dominant cycle label, 53.85% confidence, matra and vibhag chips, theka grid, and 20s-chunk timeline" />
+                    </div>
+                </div>
+
+                <div class="box shrink-0 flex flex-col" style="padding: 32px 36px !important;">
+                    <h3 class="font-serif font-bold text-walnut shrink-0" style="margin-bottom: 14px !important;">Future Scope</h3>
+                    <ul class="list-disc pl-14 shrink-0" style="margin-bottom: 20px !important;">
+                        <li style="margin-bottom: 10px !important;"><strong>Premium Cloud Deployment:</strong> Host the full CNN on a paid inference subscription (like Render) so the heavy model runs reliably for live users.</li>
+                        <li style="margin-bottom: 0 !important;"><strong>Fast Taal Expansion:</strong> Reuse the trained CNN and fine-tune only the final layer to add new rhythms in hours, not weeks.</li>
+                    </ul>
+
+                    <h3 class="font-serif font-bold text-walnut shrink-0" style="margin-bottom: 14px !important; padding-bottom: 10px !important;">Engineering Outcomes</h3>
+                    <div class="grid grid-cols-2 gap-5 shrink-0">
                         <div class="metric-container">
                             <div class="metric-value">81.8%</div>
                             <div class="metric-label">System Accuracy</div>
                         </div>
                         <div class="metric-container">
-                            <div class="metric-value">1,266</div>
-                            <div class="metric-label">Custom Audio Clips Extracted</div>
+                            <div class="metric-value">50%</div>
+                            <div class="metric-label">Min Confidence Gate</div>
                         </div>
-                    </div>
-
-                    <h3 class="font-serif font-bold text-walnut mt-4">4. Training Convergence</h3>
-                    <p class="mb-4 text-[#232323]" style="font-size: 34px !important; line-height: 1.4 !important;">30 epochs over 858 spectrogram tensors carried the CNN from <strong>39% to 95% training accuracy</strong>. The <strong>82% validation lock</strong> &mdash; a 13-point generalization gap &mdash; defines the exact frontier the <strong>Data Flywheel</strong> is engineered to close, one user correction at a time.</p>
-                    
-                    <div class="poster-img mt-2 mb-6 flex-grow" style="min-height: 220px;">
-                        <img src="UI/TrainingAccuracy.jpg" alt="CNN training log over 30 epochs reaching 95% training and 82% validation accuracy" />
-                    </div>
-
-                    <h3 class="font-serif font-bold text-walnut mt-4">5. Future Scope</h3>
-                    <ul class="list-disc pl-14 mb-0">
-                        <li><strong>Sam Localization &rarr; AI Accompaniment:</strong> Pivot from per-chunk classification to attention-based <em>frame-level</em> labeling that pinpoints each cycle's anchor beat (<em>Sam</em>). Foundation for a real-time AI tabla that auto-locks to a vocalist's tempo &mdash; turning Taal AI from passive analyzer into active musical partner.</li>
-                        <li><strong>Taxonomy Expansion via Transfer:</strong> Scale to 10+ canonical Taals (Jhaptaal, Rupak, Ektaal, Keherwa, Chautal) by freezing the convolutional backbone and fine-tuning only the dense head &mdash; new classes ship in hours, not weeks.</li>
-                    </ul>
-                </div>
-
-                <div class="bg-walnut text-white rounded-[35px] p-6 flex items-center justify-between shadow-xl border-[8px] border-walnut shrink-0">
-                    <div class="w-1/2 pr-2 pl-6">
-                        <h3 class="font-serif font-black text-gold border-none m-0 pb-0" style="font-size: 65px !important; line-height: 1.1 !important;">Live<br>Demo</h3>
-                    </div>
-                    <div class="bg-cream p-4 rounded-[24px] shadow-inner flex items-center justify-center">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://youtu.be/xpcdG-Yh_k4" alt="YouTube Demo QR Code" class="w-[180px] h-[180px] rounded-[16px]" />
+                        <div class="metric-container">
+                            <div class="metric-value">92%</div>
+                            <div class="metric-label">Live Demo Peak</div>
+                        </div>
+                        <div class="metric-container">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Taals Classified</div>
+                        </div>
                     </div>
                 </div>
             </section>
