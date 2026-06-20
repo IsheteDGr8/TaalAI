@@ -23,3 +23,11 @@ docs/First_Quarter_Submission/cnn_data/
 # Ignore the massive zip file
 archive.zip
 
+# Ignore large video files (too big for GitHub's 100MB limit)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+UI/video_demo_taal ai.mp4
+
